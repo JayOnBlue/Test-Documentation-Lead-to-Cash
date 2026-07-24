@@ -13,6 +13,7 @@ public with sharing class AccountHealthScoreService {
             Id aid = (Id) r.get('aid');
             score.put(aid, score.get(aid) + Math.min(20, 5 * (Integer) r.get('cnt')));
         }
+
         for (AggregateResult r : [SELECT AccountId aid, COUNT(Id) cnt FROM Opportunity
                                   WHERE AccountId IN :accountIds AND IsWon = true AND CloseDate = LAST_N_DAYS:180 GROUP BY AccountId]) {
             Id aid = (Id) r.get('aid');
