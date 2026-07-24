@@ -1,13 +1,37 @@
 {
   "versions": [
     {
+      "version": "v2",
+      "hash": "494dc91",
+      "when": "2026-07-25T01:09:30+05:30",
+      "author": "JayOnBlue",
+      "initials": "J",
+      "avatarBg": "#2563eb",
+      "latest": true,
+      "summary": "Update AccountHealthScoreService to include new scoring logic",
+      "description": "",
+      "filesChanged": 1,
+      "additions": 1,
+      "deletions": 0,
+      "added": [],
+      "modified": [
+        "AccountHealthScoreService"
+      ],
+      "removed": [],
+      "technicalSummary": "Modified 1 (1 ApexClass).",
+      "businessSummary": "Likely affects: Account Health Score & related.",
+      "businessFeatures": [
+        "Account Health Score & related"
+      ]
+    },
+    {
       "version": "v1",
       "hash": "2cbaf62",
       "when": "2026-07-25T01:01:43+05:30",
       "author": "JayMalde",
       "initials": "J",
       "avatarBg": "#1d4ed8",
-      "latest": true,
+      "latest": false,
       "summary": "Initial Commit",
       "description": "",
       "filesChanged": 170,
