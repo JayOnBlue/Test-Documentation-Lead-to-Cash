@@ -1,0 +1,3361 @@
+{
+  "generatedAt": "2026-07-24T19:32:05.281Z",
+  "version": 1,
+  "componentCount": 85,
+  "edgeCount": 88,
+  "componentsByType": {
+    "ApexClass": 66,
+    "Flow": 5,
+    "LightningComponentBundle": 5,
+    "ApexTrigger": 9
+  },
+  "edgesByRelationship": {
+    "calls_method": 69,
+    "constructs": 6,
+    "wire_adapter": 4,
+    "handled_by": 9
+  },
+  "components": [
+    {
+      "name": "AccountHealthScoreService",
+      "type": "ApexClass",
+      "path": "classes/AccountHealthScoreService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 85,
+      "health": "good",
+      "quality": "High",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "healthForAccount",
+          "signature": "public healthForAccount(Id accountId)",
+          "auraEnabled": true,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "AccountHealthScoreServiceTest",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "AccountHealthScoreServiceTest",
+      "type": "ApexClass",
+      "path": "classes/AccountHealthScoreServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "AccountHealthScoreService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "AccountMergeUtility",
+      "type": "ApexClass",
+      "path": "classes/AccountMergeUtility.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "mergeDuplicatesByName",
+          "signature": "public mergeDuplicatesByName(String accountName)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "AccountTerritoryService",
+      "type": "ApexClass",
+      "path": "classes/AccountTerritoryService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "territoryFor",
+          "signature": "public territoryFor(Account a)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "stampTerritoryDescription",
+          "signature": "public stampTerritoryDescription(List<Account> accounts)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "ValidationUtils",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "AccountTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "AccountTierService",
+      "type": "ApexClass",
+      "path": "classes/AccountTierService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "retierAccounts",
+          "signature": "public retierAccounts(List<Account> accounts)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "tierFor",
+          "signature": "public tierFor(Account a)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "AccountTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadConversionService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "AccountTierServiceTest",
+      "type": "ApexClass",
+      "path": "classes/AccountTierServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "AccountTriggerHandler",
+      "type": "ApexClass",
+      "path": "classes/AccountTriggerHandler.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "beforeInsert",
+          "signature": "public beforeInsert(List<Account> accounts)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "afterInsert",
+          "signature": "public afterInsert(List<Account> accounts)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "afterUpdate",
+          "signature": "public afterUpdate(List<Account> accounts, Map<Id, Account> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "AccountTerritoryService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "AccountTierService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "AccountTrigger",
+          "type": "ApexTrigger",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "CollectionUtils",
+      "type": "ApexClass",
+      "path": "classes/CollectionUtils.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "extractIds",
+          "signature": "public extractIds(List<SObject> records, String field)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "pluckDecimals",
+          "signature": "public pluckDecimals(List<SObject> records, String field)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "sum",
+          "signature": "public sum(List<Decimal> values)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "isNullOrEmpty",
+          "signature": "public isNullOrEmpty(List<Object> values)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "ContactTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityLineItemTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OrderItemTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "ContactRoleSyncService",
+      "type": "ApexClass",
+      "path": "classes/ContactRoleSyncService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "ensurePrimaryRoles",
+          "signature": "public ensurePrimaryRoles(Set<Id> accountIds)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "ContactTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "ContactTriggerHandler",
+      "type": "ApexClass",
+      "path": "classes/ContactTriggerHandler.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "afterInsert",
+          "signature": "public afterInsert(List<Contact> contacts)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "CollectionUtils",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "ContactRoleSyncService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "ContactTrigger",
+          "type": "ApexTrigger",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "CreditCheckCalloutService",
+      "type": "ApexClass",
+      "path": "classes/CreditCheckCalloutService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "passesCreditCheck",
+          "signature": "public passesCreditCheck(Id accountId, Decimal orderTotal)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "OrderActivationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "CustomerLifecycleOrchestrator",
+      "type": "ApexClass",
+      "path": "classes/CustomerLifecycleOrchestrator.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 85,
+      "health": "good",
+      "quality": "High",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "qualifyAndConvert",
+          "signature": "public qualifyAndConvert(Id leadId)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "priceAndQuote",
+          "signature": "public priceAndQuote(Id opportunityId)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "acceptAndOrder",
+          "signature": "public acceptAndOrder(Id quoteId)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "LeadConversionService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityPricingService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OrderFromQuoteService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteGenerationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteLineSyncService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "CustomerLifecycleOrchestratorTest",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "CustomerLifecycleOrchestratorTest",
+      "type": "ApexClass",
+      "path": "classes/CustomerLifecycleOrchestratorTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "CustomerLifecycleOrchestrator",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "LeadAssignmentService",
+      "type": "ApexClass",
+      "path": "classes/LeadAssignmentService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "assignOwners",
+          "signature": "public assignOwners(List<Lead> leads)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "LeadTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "LeadCaptureRestResource",
+      "type": "ApexClass",
+      "path": "classes/LeadCaptureRestResource.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "capture",
+          "signature": "global capture(String firstName, String lastName, String company, String email, String phone, String source)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "LeadDedupeService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadScoringService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "ValidationUtils",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "LeadConversionService",
+      "type": "ApexClass",
+      "path": "classes/LeadConversionService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 85,
+      "health": "good",
+      "quality": "High",
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "AccountTierService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "CustomerLifecycleOrchestrator",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadConversionServiceTest",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "LeadConversionServiceTest",
+      "type": "ApexClass",
+      "path": "classes/LeadConversionServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "LeadConversionService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "LeadDedupeService",
+      "type": "ApexClass",
+      "path": "classes/LeadDedupeService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "flagDuplicates",
+          "signature": "public flagDuplicates(List<Lead> incoming)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "LeadCaptureRestResource",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "LeadNurtureBatch",
+      "type": "ApexClass",
+      "path": "classes/LeadNurtureBatch.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "execute",
+          "signature": "public execute(Database.BatchableContext ctx, List<Lead> scope)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "finish",
+          "signature": "public finish(Database.BatchableContext ctx)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "LeadNurtureQueueable",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "NightlyPipelineJobsSchedulable",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "LeadNurtureQueueable",
+      "type": "ApexClass",
+      "path": "classes/LeadNurtureQueueable.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "execute",
+          "signature": "public execute(QueueableContext ctx)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "LeadNurtureBatch",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "LeadScoringService",
+      "type": "ApexClass",
+      "path": "classes/LeadScoringService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "scoreLeads",
+          "signature": "public scoreLeads(List<Lead> leads)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "computeScore",
+          "signature": "public computeScore(Lead l)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "getRecentHotLeads",
+          "signature": "public getRecentHotLeads()",
+          "auraEnabled": true,
+          "future": false,
+          "usedIn": [
+            {
+              "name": "leadScorecard",
+              "relationship": "wire_adapter"
+            }
+          ]
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "ValidationUtils",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "LeadCaptureRestResource",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "leadScorecard",
+          "type": "LightningComponentBundle",
+          "relationship": "wire_adapter",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "LeadScoringServiceTest",
+      "type": "ApexClass",
+      "path": "classes/LeadScoringServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "LeadTriggerHandler",
+      "type": "ApexClass",
+      "path": "classes/LeadTriggerHandler.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "beforeInsert",
+          "signature": "public beforeInsert(List<Lead> leads)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "beforeUpdate",
+          "signature": "public beforeUpdate(List<Lead> leads, Map<Id, Lead> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "afterUpdate",
+          "signature": "public afterUpdate(List<Lead> leads, Map<Id, Lead> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "LeadAssignmentService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadConversionService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadDedupeService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadScoringService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "LeadTrigger",
+          "type": "ApexTrigger",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "MarginCalculationService",
+      "type": "ApexClass",
+      "path": "classes/MarginCalculationService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "marginsForOrderItems",
+          "signature": "public marginsForOrderItems(List<OrderItem> items, Map<Id, Product2> productsById)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "PriceRuleEngine",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "OrderItemTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "NightlyPipelineJobsSchedulable",
+      "type": "ApexClass",
+      "path": "classes/NightlyPipelineJobsSchedulable.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "execute",
+          "signature": "public execute(SchedulableContext ctx)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "LeadNurtureBatch",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        },
+        {
+          "name": "PipelineSnapshotBatch",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteExpiryBatch",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        },
+        {
+          "name": "StaleOpportunityBatch",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityCloneService",
+      "type": "ApexClass",
+      "path": "classes/OpportunityCloneService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "deepClone",
+          "signature": "public deepClone(Id opportunityId, String newName)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "OrderRenewalSchedulable",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityDiscountApprovalService",
+      "type": "ApexClass",
+      "path": "classes/OpportunityDiscountApprovalService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "reviewDiscounts",
+          "signature": "public reviewDiscounts(Set<Id> opportunityIds)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "PriceRuleEngine",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "SalesOpsAuditService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "OpportunityTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityForecastService",
+      "type": "ApexClass",
+      "path": "classes/OpportunityForecastService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "flagBigDeals",
+          "signature": "public flagBigDeals(List<Opportunity> opps, Map<Id, Opportunity> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "OpportunityTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityLineItemTriggerHandler",
+      "type": "ApexClass",
+      "path": "classes/OpportunityLineItemTriggerHandler.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "afterInsertOrUpdate",
+          "signature": "public afterInsertOrUpdate(List<OpportunityLineItem> lines)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "CollectionUtils",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityPricingService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "OpportunityLineItemTrigger",
+          "type": "ApexTrigger",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityPricingService",
+      "type": "ApexClass",
+      "path": "classes/OpportunityPricingService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "repriceOpportunities",
+          "signature": "public repriceOpportunities(Set<Id> opportunityIds)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "PriceRuleEngine",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "CustomerLifecycleOrchestrator",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityLineItemTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityPricingServiceTest",
+      "type": "ApexClass",
+      "path": "classes/OpportunityPricingServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityStageGuardService",
+      "type": "ApexClass",
+      "path": "classes/OpportunityStageGuardService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "enforce",
+          "signature": "public enforce(List<Opportunity> opps, Map<Id, Opportunity> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "QuoteApprovalService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "ValidationUtils",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "OpportunityTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityStageGuardServiceTest",
+      "type": "ApexClass",
+      "path": "classes/OpportunityStageGuardServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "makeOpp",
+          "signature": "private makeOpp(String stage)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityTriggerHandler",
+      "type": "ApexClass",
+      "path": "classes/OpportunityTriggerHandler.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "beforeUpdate",
+          "signature": "public beforeUpdate(List<Opportunity> opps, Map<Id, Opportunity> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "afterUpdate",
+          "signature": "public afterUpdate(List<Opportunity> opps, Map<Id, Opportunity> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "OpportunityDiscountApprovalService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityForecastService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityStageGuardService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "OpportunityTrigger",
+          "type": "ApexTrigger",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OrderActivationService",
+      "type": "ApexClass",
+      "path": "classes/OrderActivationService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "gateActivation",
+          "signature": "public gateActivation(List<Order> orders, Map<Id, Order> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "CreditCheckCalloutService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "SalesOpsAuditService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "TaxCalculationCalloutService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "ValidationUtils",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "OrderTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OrderActivationServiceTest",
+      "type": "ApexClass",
+      "path": "classes/OrderActivationServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OrderFromQuoteService",
+      "type": "ApexClass",
+      "path": "classes/OrderFromQuoteService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 85,
+      "health": "good",
+      "quality": "High",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "createOrder",
+          "signature": "public createOrder(Id quoteId)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "CustomerLifecycleOrchestrator",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OrderFromQuoteServiceTest",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OrderFromQuoteServiceTest",
+      "type": "ApexClass",
+      "path": "classes/OrderFromQuoteServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "OrderFromQuoteService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteGenerationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OrderFulfillmentService",
+      "type": "ApexClass",
+      "path": "classes/OrderFulfillmentService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "kickoffFulfillment",
+          "signature": "public kickoffFulfillment(List<Order> activated)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "getOpenOrders",
+          "signature": "public getOpenOrders()",
+          "auraEnabled": true,
+          "future": false,
+          "usedIn": [
+            {
+              "name": "orderTracker",
+              "relationship": "wire_adapter"
+            }
+          ]
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "OrderTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "orderTracker",
+          "type": "LightningComponentBundle",
+          "relationship": "wire_adapter",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OrderItemTriggerHandler",
+      "type": "ApexClass",
+      "path": "classes/OrderItemTriggerHandler.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "afterInsertOrUpdate",
+          "signature": "public afterInsertOrUpdate(List<OrderItem> items)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "CollectionUtils",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "MarginCalculationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "OrderItemTrigger",
+          "type": "ApexTrigger",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "OrderRenewalSchedulable",
+      "type": "ApexClass",
+      "path": "classes/OrderRenewalSchedulable.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "execute",
+          "signature": "public execute(SchedulableContext ctx)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "OpportunityCloneService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OrderStatusRestResource",
+      "type": "ApexClass",
+      "path": "classes/OrderStatusRestResource.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "getStatus",
+          "signature": "global getStatus()",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "activate",
+          "signature": "global activate(String orderNumber)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OrderTriggerHandler",
+      "type": "ApexClass",
+      "path": "classes/OrderTriggerHandler.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "beforeUpdate",
+          "signature": "public beforeUpdate(List<Order> orders, Map<Id, Order> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "afterUpdate",
+          "signature": "public afterUpdate(List<Order> orders, Map<Id, Order> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "OrderActivationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OrderFulfillmentService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "RevenueRecognitionService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "OrderTrigger",
+          "type": "ApexTrigger",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "PipelineSnapshotBatch",
+      "type": "ApexClass",
+      "path": "classes/PipelineSnapshotBatch.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "execute",
+          "signature": "public execute(Database.BatchableContext ctx, List<Opportunity> scope)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "finish",
+          "signature": "public finish(Database.BatchableContext ctx)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "NightlyPipelineJobsSchedulable",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "PriceRuleEngine",
+      "type": "ApexClass",
+      "path": "classes/PriceRuleEngine.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 85,
+      "health": "good",
+      "quality": "High",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "price",
+          "signature": "public price(PriceContext ctx)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "volumeDiscountPct",
+          "signature": "public volumeDiscountPct(String family, Decimal quantity)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "tierDiscountPct",
+          "signature": "public tierDiscountPct(String accountTier)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "familyAdjustmentPct",
+          "signature": "public familyAdjustmentPct(String family)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "capDiscount",
+          "signature": "public capDiscount(Decimal discount)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "marginFloorPrice",
+          "signature": "public marginFloorPrice(Decimal listPrice, String family)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "requiresApproval",
+          "signature": "public requiresApproval(Decimal discountPct, Decimal dealAmount)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "accountTierFor",
+          "signature": "public accountTierFor(Id accountId)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "MarginCalculationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityDiscountApprovalService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityPricingService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "PriceRuleEngineTest",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteApprovalService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteGenerationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "PriceRuleEngineTest",
+      "type": "ApexClass",
+      "path": "classes/PriceRuleEngineTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "PriceRuleEngine",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "PricebookSyncService",
+      "type": "ApexClass",
+      "path": "classes/PricebookSyncService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "syncStandardEntries",
+          "signature": "public syncStandardEntries(List<Product2> products)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "standardPricebookId",
+          "signature": "public standardPricebookId()",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "ProductTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "PricebookSyncServiceTest",
+      "type": "ApexClass",
+      "path": "classes/PricebookSyncServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "ProductBundleService",
+      "type": "ApexClass",
+      "path": "classes/ProductBundleService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "expandBundles",
+          "signature": "public expandBundles(Id opportunityId)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "ProductCatalogService",
+      "type": "ApexClass",
+      "path": "classes/ProductCatalogService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "normalizeProductCodes",
+          "signature": "public normalizeProductCodes(List<Product2> products)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "warnOpenPipelineOnRetirement",
+          "signature": "public warnOpenPipelineOnRetirement(List<Product2> deactivated)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "ProductTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "ProductTriggerHandler",
+      "type": "ApexClass",
+      "path": "classes/ProductTriggerHandler.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "beforeInsertOrUpdate",
+          "signature": "public beforeInsertOrUpdate(List<Product2> products)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "afterInsert",
+          "signature": "public afterInsert(List<Product2> products)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "afterUpdate",
+          "signature": "public afterUpdate(List<Product2> products, Map<Id, Product2> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "PricebookSyncService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "ProductCatalogService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "ProductTrigger",
+          "type": "ApexTrigger",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "QuoteApprovalService",
+      "type": "ApexClass",
+      "path": "classes/QuoteApprovalService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "gatePresentation",
+          "signature": "public gatePresentation(List<Quote> quotes, Map<Id, Quote> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "quotesWithCompletedApproval",
+          "signature": "public quotesWithCompletedApproval(Set<Id> quoteIds)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "opportunitiesWithAcceptedQuote",
+          "signature": "public opportunitiesWithAcceptedQuote(Set<Id> opportunityIds)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "PriceRuleEngine",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "SalesOpsAuditService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "OpportunityStageGuardService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "QuoteExpiryBatch",
+      "type": "ApexClass",
+      "path": "classes/QuoteExpiryBatch.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "execute",
+          "signature": "public execute(Database.BatchableContext ctx, List<Quote> scope)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "finish",
+          "signature": "public finish(Database.BatchableContext ctx)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "NightlyPipelineJobsSchedulable",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "QuoteGenerationService",
+      "type": "ApexClass",
+      "path": "classes/QuoteGenerationService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 85,
+      "health": "good",
+      "quality": "High",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "generateFromOpportunity",
+          "signature": "public generateFromOpportunity(Id opportunityId)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "getQuotableOpportunities",
+          "signature": "public getQuotableOpportunities()",
+          "auraEnabled": true,
+          "future": false,
+          "usedIn": [
+            {
+              "name": "quoteBuilder",
+              "relationship": "wire_adapter"
+            }
+          ]
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "PriceRuleEngine",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "ValidationUtils",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "CustomerLifecycleOrchestrator",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OrderFromQuoteServiceTest",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteGenerationServiceTest",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteLineSyncServiceTest",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "quoteBuilder",
+          "type": "LightningComponentBundle",
+          "relationship": "wire_adapter",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "QuoteGenerationServiceTest",
+      "type": "ApexClass",
+      "path": "classes/QuoteGenerationServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "QuoteGenerationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "QuoteLineSyncService",
+      "type": "ApexClass",
+      "path": "classes/QuoteLineSyncService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "syncAcceptedQuotes",
+          "signature": "public syncAcceptedQuotes(List<Quote> quotes)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "CustomerLifecycleOrchestrator",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "QuoteLineSyncServiceTest",
+      "type": "ApexClass",
+      "path": "classes/QuoteLineSyncServiceTest.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": true,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "QuoteGenerationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "QuotePdfQueueable",
+      "type": "ApexClass",
+      "path": "classes/QuotePdfQueueable.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "execute",
+          "signature": "public execute(QueueableContext ctx)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "QuoteTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "QuoteTriggerHandler",
+      "type": "ApexClass",
+      "path": "classes/QuoteTriggerHandler.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "beforeUpdate",
+          "signature": "public beforeUpdate(List<Quote> quotes, Map<Id, Quote> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "afterUpdate",
+          "signature": "public afterUpdate(List<Quote> quotes, Map<Id, Quote> oldMap)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "QuoteApprovalService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteLineSyncService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuotePdfQueueable",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        },
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "QuoteTrigger",
+          "type": "ApexTrigger",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "RevenueRecognitionService",
+      "type": "ApexClass",
+      "path": "classes/RevenueRecognitionService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "scheduleRecognition",
+          "signature": "public scheduleRecognition(List<Order> activatedOrders)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "OrderTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "SalesMetricsService",
+      "type": "ApexClass",
+      "path": "classes/SalesMetricsService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "topOpenDeals",
+          "signature": "public topOpenDeals()",
+          "auraEnabled": true,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "pipelineDashboard",
+          "type": "LightningComponentBundle",
+          "relationship": "wire_adapter",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "SalesOpsAuditService",
+      "type": "ApexClass",
+      "path": "classes/SalesOpsAuditService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "record",
+          "signature": "public record(String category, List<String> notes)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "ValidationUtils",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "OpportunityDiscountApprovalService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OrderActivationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteApprovalService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "StaleOpportunityBatch",
+      "type": "ApexClass",
+      "path": "classes/StaleOpportunityBatch.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "execute",
+          "signature": "public execute(Database.BatchableContext ctx, List<Opportunity> scope)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "finish",
+          "signature": "public finish(Database.BatchableContext ctx)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [
+        {
+          "name": "TriggerControl",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [
+        {
+          "name": "NightlyPipelineJobsSchedulable",
+          "type": "ApexClass",
+          "relationship": "constructs",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "TaxCalculationCalloutService",
+      "type": "ApexClass",
+      "path": "classes/TaxCalculationCalloutService.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "estimateTax",
+          "signature": "public estimateTax(Decimal amount, String billingState)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "OrderActivationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "TriggerControl",
+      "type": "ApexClass",
+      "path": "classes/TriggerControl.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "bypass",
+          "signature": "public bypass(String objectName)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "clearBypass",
+          "signature": "public clearBypass(String objectName)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "isBypassed",
+          "signature": "public isBypassed(String objectName)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "clearAll",
+          "signature": "public clearAll()",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "AccountTierService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "AccountTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "CustomerLifecycleOrchestrator",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityLineItemTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityPricingService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OrderTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteExpiryBatch",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteLineSyncService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "StaleOpportunityBatch",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "ValidationUtils",
+      "type": "ApexClass",
+      "path": "classes/ValidationUtils.cls",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": 40,
+      "health": "warn",
+      "quality": "Low",
+      "securityFindings": [],
+      "methods": [
+        {
+          "name": "isValidEmail",
+          "signature": "public isValidEmail(String email)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "isBusinessEmail",
+          "signature": "public isBusinessEmail(String email)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "isValidPhone",
+          "signature": "public isValidPhone(String phone)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "isPositive",
+          "signature": "public isPositive(Decimal value)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "isNonNegative",
+          "signature": "public isNonNegative(Decimal value)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "isPercent",
+          "signature": "public isPercent(Decimal value)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "isFutureDate",
+          "signature": "public isFutureDate(Date d)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "isPastDate",
+          "signature": "public isPastDate(Date d)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "isWithinDays",
+          "signature": "public isWithinDays(Date d, Integer days)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "hasText",
+          "signature": "public hasText(String value, Integer minLength)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "inSet",
+          "signature": "public inSet(String value, Set<String> allowed)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "normalizeCountry",
+          "signature": "public normalizeCountry(String country)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        },
+        {
+          "name": "truncate",
+          "signature": "public truncate(String value, Integer maxLength)",
+          "auraEnabled": false,
+          "future": false,
+          "usedIn": []
+        }
+      ],
+      "dependsOn": [],
+      "usedBy": [
+        {
+          "name": "AccountTerritoryService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadCaptureRestResource",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "LeadScoringService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OpportunityStageGuardService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "OrderActivationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "QuoteGenerationService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        },
+        {
+          "name": "SalesOpsAuditService",
+          "type": "ApexClass",
+          "relationship": "calls_method",
+          "confidence": "High"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "Big_Deal_Alert",
+      "type": "Flow",
+      "path": "flows/Big_Deal_Alert.flow-meta.xml",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "Lead_Followup_Reminder",
+      "type": "Flow",
+      "path": "flows/Lead_Followup_Reminder.flow-meta.xml",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "Order_Activation_Confirmation",
+      "type": "Flow",
+      "path": "flows/Order_Activation_Confirmation.flow-meta.xml",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "Product_Retirement_Notice",
+      "type": "Flow",
+      "path": "flows/Product_Retirement_Notice.flow-meta.xml",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "Quote_Expiry_Alert",
+      "type": "Flow",
+      "path": "flows/Quote_Expiry_Alert.flow-meta.xml",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "leadScorecard",
+      "type": "LightningComponentBundle",
+      "path": "lwc/leadScorecard",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "LeadScoringService",
+          "type": "ApexClass",
+          "relationship": "wire_adapter",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "orderTracker",
+      "type": "LightningComponentBundle",
+      "path": "lwc/orderTracker",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "OrderFulfillmentService",
+          "type": "ApexClass",
+          "relationship": "wire_adapter",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "pipelineDashboard",
+      "type": "LightningComponentBundle",
+      "path": "lwc/pipelineDashboard",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "SalesMetricsService",
+          "type": "ApexClass",
+          "relationship": "wire_adapter",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "quoteBuilder",
+      "type": "LightningComponentBundle",
+      "path": "lwc/quoteBuilder",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "QuoteGenerationService",
+          "type": "ApexClass",
+          "relationship": "wire_adapter",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "salesPlaybookBanner",
+      "type": "LightningComponentBundle",
+      "path": "lwc/salesPlaybookBanner",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "AccountTrigger",
+      "type": "ApexTrigger",
+      "path": "triggers/AccountTrigger.trigger",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "AccountTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "ContactTrigger",
+      "type": "ApexTrigger",
+      "path": "triggers/ContactTrigger.trigger",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "ContactTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "LeadTrigger",
+      "type": "ApexTrigger",
+      "path": "triggers/LeadTrigger.trigger",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "LeadTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityLineItemTrigger",
+      "type": "ApexTrigger",
+      "path": "triggers/OpportunityLineItemTrigger.trigger",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "OpportunityLineItemTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OpportunityTrigger",
+      "type": "ApexTrigger",
+      "path": "triggers/OpportunityTrigger.trigger",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "OpportunityTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OrderItemTrigger",
+      "type": "ApexTrigger",
+      "path": "triggers/OrderItemTrigger.trigger",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "OrderItemTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "OrderTrigger",
+      "type": "ApexTrigger",
+      "path": "triggers/OrderTrigger.trigger",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "OrderTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "ProductTrigger",
+      "type": "ApexTrigger",
+      "path": "triggers/ProductTrigger.trigger",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "ProductTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    },
+    {
+      "name": "QuoteTrigger",
+      "type": "ApexTrigger",
+      "path": "triggers/QuoteTrigger.trigger",
+      "updated": "2026-07-25T01:01:43+05:30",
+      "isTestClass": false,
+      "coverage": null,
+      "health": "n/a",
+      "quality": null,
+      "securityFindings": [],
+      "methods": [],
+      "dependsOn": [
+        {
+          "name": "QuoteTriggerHandler",
+          "type": "ApexClass",
+          "relationship": "handled_by",
+          "confidence": "High"
+        }
+      ],
+      "usedBy": [],
+      "purpose": null
+    }
+  ],
+  "schemas": {},
+  "features": [
+    {
+      "slug": "feature-2",
+      "title": "Trigger Control & related",
+      "description": "Automated by 8 triggers, 49 Apex classes, 3 Lightning components.",
+      "members": [
+        "AccountTerritoryService",
+        "ValidationUtils",
+        "AccountTriggerHandler",
+        "LeadCaptureRestResource",
+        "LeadScoringService",
+        "OpportunityStageGuardService",
+        "OrderActivationService",
+        "QuoteGenerationService",
+        "SalesOpsAuditService",
+        "AccountTierService",
+        "TriggerControl",
+        "AccountTrigger",
+        "LeadDedupeService",
+        "LeadTriggerHandler",
+        "leadScorecard",
+        "QuoteApprovalService",
+        "OpportunityTriggerHandler",
+        "CreditCheckCalloutService",
+        "TaxCalculationCalloutService",
+        "OrderTriggerHandler",
+        "CustomerLifecycleOrchestrator",
+        "OrderFromQuoteServiceTest",
+        "PriceRuleEngine",
+        "QuoteGenerationServiceTest",
+        "QuoteLineSyncServiceTest",
+        "quoteBuilder",
+        "OpportunityDiscountApprovalService",
+        "LeadConversionService",
+        "OpportunityLineItemTriggerHandler",
+        "OpportunityPricingService",
+        "QuoteExpiryBatch",
+        "QuoteLineSyncService",
+        "QuoteTriggerHandler",
+        "StaleOpportunityBatch",
+        "LeadAssignmentService",
+        "LeadTrigger",
+        "OpportunityForecastService",
+        "OpportunityTrigger",
+        "OrderFulfillmentService",
+        "RevenueRecognitionService",
+        "OrderTrigger",
+        "OrderFromQuoteService",
+        "CustomerLifecycleOrchestratorTest",
+        "MarginCalculationService",
+        "PriceRuleEngineTest",
+        "LeadConversionServiceTest",
+        "CollectionUtils",
+        "OpportunityLineItemTrigger",
+        "NightlyPipelineJobsSchedulable",
+        "QuotePdfQueueable",
+        "QuoteTrigger",
+        "orderTracker",
+        "OrderItemTriggerHandler",
+        "ContactTriggerHandler",
+        "LeadNurtureBatch",
+        "PipelineSnapshotBatch",
+        "OrderItemTrigger",
+        "ContactRoleSyncService",
+        "ContactTrigger",
+        "LeadNurtureQueueable"
+      ],
+      "memberCount": 60,
+      "quality": "Low"
+    },
+    {
+      "slug": "feature-4",
+      "title": "Product & related",
+      "description": "Automated by 1 trigger, 3 Apex classes.",
+      "members": [
+        "PricebookSyncService",
+        "ProductTriggerHandler",
+        "ProductCatalogService",
+        "ProductTrigger"
+      ],
+      "memberCount": 4,
+      "quality": "Low"
+    },
+    {
+      "slug": "feature-1",
+      "title": "Account Health Score & related",
+      "description": "Automated by 2 Apex classes.",
+      "members": [
+        "AccountHealthScoreService",
+        "AccountHealthScoreServiceTest"
+      ],
+      "memberCount": 2,
+      "quality": "High"
+    },
+    {
+      "slug": "feature-3",
+      "title": "Opportunity Clone & related",
+      "description": "Automated by 2 Apex classes.",
+      "members": [
+        "OpportunityCloneService",
+        "OrderRenewalSchedulable"
+      ],
+      "memberCount": 2,
+      "quality": "Low"
+    },
+    {
+      "slug": "feature-5",
+      "title": "Sales Metrics & related",
+      "description": "Automated by 1 Apex class, 1 Lightning component.",
+      "members": [
+        "SalesMetricsService",
+        "pipelineDashboard"
+      ],
+      "memberCount": 2,
+      "quality": "Low"
+    }
+  ]
+}
