@@ -1,0 +1,11 @@
+<template>
+    <lightning-card title="Hot Leads" icon-name="standard:lead">
+        <template if:true={leads.data}>
+            <ul class="slds-p-horizontal_medium">
+                <template for:each={leads.data} for:item="lead">
+                    <li key={lead.Id} class="slds-p-vertical_x-small">{lead.Name} — {lead.Company} ({lead.LeadSource})</li>
+                </template>
+            </ul>
+        </template>
+    </lightning-card>
+</template>

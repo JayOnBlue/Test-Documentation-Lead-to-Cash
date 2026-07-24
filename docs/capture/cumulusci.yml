@@ -1,0 +1,22 @@
+minimum_cumulusci_version: "3.90.0"
+project:
+    name: DocsProject
+    package:
+        name: Project Docs
+        api_version: "60.0"
+    git:
+        default_branch: main
+
+tasks:
+    capture_docs:
+        description: >
+            Capture documentation screenshots against the target org. Already-captured
+            screenshots are skipped by default; pass "-o vars FORCE:True" to recapture
+            everything, e.g. cci task run capture_docs --org ci -o vars FORCE:True
+        class_path: cumulusci.tasks.robotframework.Robot
+        options:
+            suites: robot/DocsProject/tests/docs_capture.robot
+            vars:
+                - FORCE:False
+            options:
+                outputdir: robot/DocsProject/results

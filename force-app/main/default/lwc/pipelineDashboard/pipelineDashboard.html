@@ -1,0 +1,11 @@
+<template>
+    <lightning-card title="Pipeline by Stage" icon-name="standard:forecasts">
+        <template if:true={stages}>
+            <ul class="slds-p-horizontal_medium">
+                <template for:each={stages} for:item="row">
+                    <li key={row.stage} class="slds-p-vertical_x-small">{row.stage}: {row.total}</li>
+                </template>
+            </ul>
+        </template>
+    </lightning-card>
+</template>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{SITE_NAME}}</title>
+<meta name="description" content="Business and technical documentation, generated from force-app metadata.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="progress-bar"></div>
+
+  <header class="topbar">
+    <a class="topbar__logo" href="#/"><span class="topbar__mark" aria-hidden="true"></span><span id="site-name">{{SITE_NAME}}</span></a>
+    <button id="search-trigger" class="topbar__search" type="button">
+      <span aria-hidden="true">&#128269;</span>
+      <span class="topbar__search-label">Search documentation...</span>
+      <span class="kbd">/</span>
+    </button>
+    <div class="topbar__actions">
+      <a id="btn-changelog" class="topbar__btn" href="#/changelog"><span aria-hidden="true">&#128337;</span> Changelog</a>
+      <a id="btn-tech" class="topbar__btn" href="#/tech"><span aria-hidden="true">&lt;/&gt;</span> Technical Reference</a>
+      <button id="btn-download" class="topbar__btn topbar__btn--primary" type="button"><span aria-hidden="true">&#8681;</span> Download docs</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside id="sidebar" class="sidebar"></aside>
+    <main id="main" class="content" tabindex="-1"></main>
+    <aside id="toc-rail" class="toc-rail"></aside>
+  </div>
+
+  <button id="back-to-top" type="button" aria-label="Back to top">&#8593;</button>
+
+  <div id="modal-root"></div>
+  <div id="search-modal-root"></div>
+
+  <script src="data.js"></script>
+  <!-- Diagram rendering for ```mermaid blocks in the docs. Loaded from CDN with
+       defer + startOnLoad:false; app.js re-runs mermaid after every SPA route
+       render. If the CDN is unreachable the diagram source text stays visible. -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"
+          onload="mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'strict' })"></script>
+  <script src="app.js"></script>
+</body>
+</html>

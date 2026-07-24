@@ -1,0 +1,200 @@
+# =============================================================================
+# Secretless Salesforce documentation screenshot capture
+# (CumulusCI + Robot Framework SalesforcePlaywright)
+# =============================================================================
+#
+# Reads docs/screenshot-manifest.json (generated from the ```screenshot blocks in
+# docs/business/**/*.md) and captures every entry against a real org:
+#   - entries with an `actions:` list are replayed as real UI interactions
+#     (App Launcher opened, search typed, New clicked, ...) so each image depicts
+#     the exact documented step;
+#   - entries with only a url_pattern are captured by direct navigation.
+# Every capture waits until the page is FULLY rendered (spinners AND Lightning's
+# grey stencil skeletons gone) before shooting.
+#
+# It uses NO GitHub Secrets. The Salesforce access token is pasted by the
+# operator at trigger time as a workflow_dispatch input and lives only for the
+# duration of the run. The only thing this workflow ever commits is docs/images/.
+#
+# >>> KNOWN & ACCEPTED CAVEAT — READ BEFORE USE <<<
+# workflow_dispatch inputs (including `access_token`) are recorded in the run
+# history and are visible to anyone with repository read access. This is
+# ACCEPTABLE here because (a) the repository is private / single-maintainer, so
+# the run-history audience is the same person who minted the token, and (b) the
+# token is short-lived — it dies at the Salesforce session timeout (~2h) and is
+# additionally revoked at the end of every run (see the `always()` logout step).
+# Do NOT try to "fix" this by moving the token into GitHub Secrets — a pasted,
+# ephemeral, self-revoking credential is the entire point of this design.
+# =============================================================================
+
+name: SF Screenshots
+
+# workflow_dispatch only. No push / pull_request triggers, so this
+# pasted-credential workflow can never be started by inbound/forked PRs.
+on:
+  workflow_dispatch:
+    inputs:
+      access_token:
+        description: "Salesforce org access token (mint locally: sf org display -o <alias>)"
+        required: true
+        type: string
+      instance_url:
+        description: "My Domain / instance URL for the org"
+        required: true
+        type: string
+        default: "https://login.salesforce.com"
+      recapture:
+        description: "Overwrite screenshots that already exist"
+        required: false
+        type: boolean
+        default: false
+
+# Least privilege: contents:write to commit docs/images/ via the auto-issued
+# GITHUB_TOKEN; actions:write only to trigger the docs-pipeline run at the end
+# so GitHub Pages redeploys with the new images.
+permissions:
+  contents: write
+  actions: write
+
+# Serialize runs so two dispatches cannot race the docs/images commit.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # Third-party actions pinned to full commit SHAs.
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Node 22 (LTS) is required: the Salesforce CLI bundles undici 8.0.3, which
+      # calls worker_threads.markAsUncloneable — an API added in v22.10.0 and NOT
+      # backported to Node 20. On Node 20 the CLI crashes at `sf org login` with
+      # "webidl.util.markAsUncloneable is not a function" (nodejs/undici#5024).
+      - name: Setup Node 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: docs/package-lock.json
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: docs/capture/requirements.txt
+
+      - name: Install Salesforce CLI (if missing)
+        run: |
+          if command -v sf >/dev/null 2>&1; then
+            echo "sf already present: $(sf --version)"
+          else
+            npm install --global @salesforce/cli
+            echo "installed: $(sf --version)"
+          fi
+
+      - name: Install CumulusCI + Robot Browser library
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r docs/capture/requirements.txt
+          # Installs the Playwright browser binaries (and their OS deps) that the
+          # Robot Browser library drives.
+          rfbrowser init chromium
+
+      # ---------------------------------------------------------------------
+      # Auth. add-mask is the FIRST line so the token is scrubbed from any later
+      # accidental echo. The token reaches the CLI ONLY through the step-scoped
+      # env var SF_ACCESS_TOKEN (never interpolated into the script body);
+      # --no-prompt makes the CLI read SF_ACCESS_TOKEN. No set -x, no --verbose.
+      # ---------------------------------------------------------------------
+      - name: Authenticate to Salesforce
+        env:
+          SF_ACCESS_TOKEN: ${{ inputs.access_token }}
+          SF_INSTANCE_URL: ${{ inputs.instance_url }}
+        run: |
+          echo "::add-mask::${{ inputs.access_token }}"
+          sf org login access-token \
+            --no-prompt \
+            --instance-url "$SF_INSTANCE_URL" \
+            --alias screenshotOrg \
+            --set-default
+
+      # Verify without leaking: jq selects only non-sensitive fields; the raw
+      # (token-bearing) JSON is never printed.
+      - name: Verify session (redacted)
+        run: |
+          sf org display --target-org screenshotOrg --json \
+            | jq '{username: .result.username, instanceUrl: .result.instanceUrl, connectedStatus: .result.connectedStatus}'
+
+      # Regenerate the screenshot manifest from the CURRENT business docs so the
+      # capture never runs against a stale committed manifest.
+      - name: Refresh screenshot manifest
+        working-directory: docs
+        run: |
+          npm ci
+          node scripts/build-site.js
+
+      - name: Import org into CumulusCI keychain
+        working-directory: docs/capture
+        run: cci org import screenshotOrg ci
+
+      - name: Capture screenshots
+        working-directory: docs/capture
+        env:
+          RECAPTURE: ${{ inputs.recapture }}
+        run: |
+          if [ "$RECAPTURE" = "true" ]; then
+            cci task run capture_docs --org ci -o vars FORCE:True
+          else
+            cci task run capture_docs --org ci
+          fi
+
+      # Revoke the runner-side session no matter what happened above
+      # (success, failure, or cancellation).
+      - name: Logout (revoke session)
+        if: always()
+        run: sf org logout --target-org screenshotOrg --no-prompt || true
+
+      # The ONLY thing this workflow ever writes back to the repository is
+      # docs/images/ — never scripts, never site output, never metadata.
+      - name: Commit screenshots
+        run: |
+          git config user.name "sf-screenshots-bot"
+          git config user.email "sf-screenshots-bot@users.noreply.github.com"
+          git add docs/images
+          if git diff --cached --quiet; then
+            echo "No screenshot changes to commit."
+          else
+            git commit -m "docs(screenshots): refresh captured Salesforce screenshots [skip ci]"
+            git push
+          fi
+
+      # Redeploy GitHub Pages with the new images (docs-pipeline's push trigger
+      # only watches force-app/**, so an images-only commit wouldn't rebuild it).
+      - name: Trigger docs pipeline for Pages redeploy
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run docs-pipeline.yml --ref "${GITHUB_REF_NAME}"
+
+      - name: Upload screenshots artifact
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sf-screenshots
+          path: docs/images
+          if-no-files-found: warn
+
+      # Robot Framework's own log/report — the first place to look when a
+      # capture fails or a selector drifts.
+      - name: Upload Robot Framework results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: robot-results
+          path: docs/capture/robot/DocsProject/results
+          if-no-files-found: ignore

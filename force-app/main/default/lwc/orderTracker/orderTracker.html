@@ -1,0 +1,11 @@
+<template>
+    <lightning-card title="Open Orders" icon-name="standard:orders">
+        <template if:true={orders.data}>
+            <ul class="slds-p-horizontal_medium">
+                <template for:each={orders.data} for:item="order">
+                    <li key={order.Id} class="slds-p-vertical_x-small">{order.OrderNumber} — {order.Status} ({order.TotalAmount})</li>
+                </template>
+            </ul>
+        </template>
+    </lightning-card>
+</template>

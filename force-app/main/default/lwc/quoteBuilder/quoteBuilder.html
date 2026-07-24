@@ -1,0 +1,11 @@
+<template>
+    <lightning-card title="Quotable Opportunities" icon-name="standard:quotes">
+        <template if:true={opportunities.data}>
+            <ul class="slds-p-horizontal_medium">
+                <template for:each={opportunities.data} for:item="opp">
+                    <li key={opp.Id} class="slds-p-vertical_x-small">{opp.Name} — {opp.StageName} ({opp.Amount})</li>
+                </template>
+            </ul>
+        </template>
+    </lightning-card>
+</template>

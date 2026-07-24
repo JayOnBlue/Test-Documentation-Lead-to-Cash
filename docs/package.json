@@ -1,0 +1,21 @@
+{
+  "name": "sf-docs-workflow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Docs tooling: force-app metadata -> generated Markdown docs -> one GitHub Pages site. Run all npm commands from this docs/ folder.",
+  "scripts": {
+    "extract:technical": "node scripts/extract-technical.js",
+    "author:business": "node scripts/author-business-docs.mjs",
+    "version-history": "node scripts/generate-version-history.js",
+    "changelog": "node scripts/generate-changelog.js",
+    "build:site": "node scripts/build-site.js",
+    "build": "npm run extract:technical && npm run author:business && npm run version-history && npm run changelog && npm run build:site",
+    "capture-panel": "node capture/server.mjs"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.1",
+    "js-yaml": "^5.2.1",
+    "markdown-it": "^14.3.0"
+  }
+}
