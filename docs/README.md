@@ -28,7 +28,9 @@ docs/
 ├── images/              Captured screenshots, one <screenshot-id>.png per documented step.
 ├── screenshot-manifest.json   Generated index of every screenshot block across the business docs —
 │                        the single input the screenshot workflow reads.
-├── _state/              Pipeline state (last documented commit) — enables incremental doc updates.
+├── _state/              Pipeline state — two independent progress markers: lastChangelogCommit
+│                        (changelog generator) and lastAuthoredCommit (AI business-doc step), so a
+│                        skipped/failed AI run never loses its queued work to the changelog advancing.
 ├── site/                Build output for GitHub Pages (git-ignored, rebuilt every run).
 ├── scripts/             All pipeline code (Node.js, no build step).
 ├── capture/             The screenshot capture harness (CumulusCI + Robot Framework + Playwright)
@@ -40,7 +42,9 @@ docs/
 
 ### 1. Documentation generation — `.github/workflows/docs-pipeline.yml`
 
-Runs on every push/merge to `main` that touches `force-app/**` (and on demand).
+Runs on every push/merge to `main` that touches `force-app/**` or `docs/business/**` (and on
+demand). The `docs/business/**` trigger is what re-deploys the site after an AI business-doc PR
+is merged — that merge touches nothing under `force-app/`.
 
 1. Scans `force-app` and regenerates the technical reference, version history and changelog
    (all deterministic — same input, same output).

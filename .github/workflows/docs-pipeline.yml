@@ -21,6 +21,11 @@ on:
     branches: [main]
     paths:
       - 'force-app/**'
+      # docs/business/** matters too: the AI-authored business docs land on main via a
+      # reviewed PR that touches ONLY docs/business/ — without this path the site never
+      # rebuilds after that merge, so approved business docs would never appear on the
+      # published site until the next unrelated force-app push.
+      - 'docs/business/**'
   workflow_dispatch:
 
 permissions:
@@ -69,9 +74,26 @@ jobs:
       - name: Install Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
 
+      - name: Warn early if the Claude token secret is missing
+        if: env.CLAUDE_CODE_OAUTH_TOKEN == ''
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          echo "::warning::CLAUDE_CODE_OAUTH_TOKEN secret is not set — the AI business-doc step below will be"
+          echo "::warning::SKIPPED and docs/business/ will stay as-is (this is why the site's business/use-case"
+          echo "::warning::section can be empty). Generate a token locally with 'claude setup-token' and add it"
+          echo "::warning::under Settings -> Secrets and variables -> Actions -> New repository secret."
+
       - name: Ask Claude to update business docs for what changed
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # 'sonnet' is an alias that always resolves to the LATEST Sonnet-family
+          # model (Sonnet 5 today, auto-upgrading when a newer Sonnet ships) —
+          # instead of inheriting the subscription plan's default, which varies by
+          # plan and may be Opus (slower, heavier on plan usage) on Max. Pin a full
+          # ID (e.g. claude-sonnet-5) here instead if you ever need frozen,
+          # reproducible output over auto-upgrades.
+          ANTHROPIC_MODEL: sonnet
         run: node docs/scripts/author-business-docs.mjs
 
       - name: Open a PR for any AI-authored business-doc changes

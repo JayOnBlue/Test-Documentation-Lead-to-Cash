@@ -52,7 +52,37 @@ function sh(cmd) {
 }
 
 function loadState() {
-  try { return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')); } catch (e) { return { lastDocumentedCommit: null }; }
+  try { return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')); } catch (e) { return {}; }
+}
+
+function saveState(patch) {
+  const next = { ...loadState(), ...patch };
+  fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
+  fs.writeFileSync(STATE_FILE, JSON.stringify(next, null, 2));
+}
+
+// Repo-relative paths of every dirty (modified/added/untracked) file. Parsed from
+// UN-trimmed `git status --porcelain` output: sh() trims, which eats the leading
+// space of the first " M file" line and shifts its two-char status prefix — the
+// first dirty file then parses as e.g. "EADME.md", silently breaking both the
+// dirty-before snapshot and the revert below.
+function dirtyPaths() {
+  let raw;
+  try { raw = execSync('git status --porcelain', { cwd: ROOT, stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 }).toString(); }
+  catch (e) { return []; }
+  return raw.split('\n').filter(Boolean).map((line) => {
+    let p = line.slice(3);
+    if (p.includes(' -> ')) p = p.split(' -> ').pop(); // rename: keep the new path
+    return p.replace(/^"(.*)"$/, '$1').trim();          // git quotes paths with special chars
+  }).filter(Boolean);
+}
+
+// In GitHub Actions a plain console.log line is buried in a collapsed step log —
+// a skipped AI step then looks identical to a successful one from the run summary.
+// ::warning:: makes it a visible annotation on the run instead.
+function warn(msg) {
+  if (process.env.GITHUB_ACTIONS) console.log(`::warning::${msg}`);
+  console.warn(msg);
 }
 
 function classifyForceAppPath(repoRelPath) {
@@ -78,7 +108,15 @@ if (!headSha) {
   process.exit(0);
 }
 
-const isBaseline = !state.lastDocumentedCommit || sh(`git cat-file -e ${state.lastDocumentedCommit}`) === null;
+// IMPORTANT: this script tracks its OWN progress key (lastAuthoredCommit), separate
+// from the changelog's. It used to share the changelog's lastDocumentedCommit — but
+// generate-changelog.js runs later in the same pipeline and advances that key even
+// when this step was skipped (no CLAUDE_CODE_OAUTH_TOKEN secret, no CLI, or a failed
+// batch). The skipped work was then considered "documented" forever and the business
+// docs never caught up. lastAuthoredCommit only advances at the bottom of THIS script,
+// after every batch actually ran.
+const lastAuthored = state.lastAuthoredCommit || null;
+const isBaseline = !lastAuthored || sh(`git cat-file -e ${lastAuthored}`) === null;
 const STATUS_LABEL = { A: 'Added', M: 'Modified', D: 'Removed', R: 'Renamed' };
 let changes;
 
@@ -102,7 +140,7 @@ if (isBaseline) {
     path: path.join('force-app', 'main', 'default', c.path).split(path.sep).join('/'),
   }));
 } else {
-  const nameStatusRaw = sh(`git diff --name-status ${state.lastDocumentedCommit}..${headSha} -- force-app`) || '';
+  const nameStatusRaw = sh(`git diff --name-status ${lastAuthored}..${headSha} -- force-app`) || '';
   changes = nameStatusRaw.split('\n').filter(Boolean).map((line) => {
     const [statusRaw, ...pathParts] = line.split('\t');
     const filePath = pathParts[pathParts.length - 1];
@@ -118,14 +156,17 @@ if (changes.length === 0) {
 
 const hasClaudeCli = sh('claude --version') !== null;
 if (!hasClaudeCli) {
-  console.log('The `claude` CLI is not installed here — skipping AI authorship for this local run.');
+  warn('The `claude` CLI is not installed here — SKIPPING AI business-doc authorship. ' +
+    `${changes.length} changed file(s) remain undocumented; they stay queued (lastAuthoredCommit not advanced) and will be picked up by the next run that has the CLI.`);
   console.log('Install it with: npm install -g @anthropic-ai/claude-code');
-  console.log(`Changed files that a CI run WOULD have asked Claude to write up (${changes.length}):`);
+  console.log(`Changed files that a run WITH the CLI would ask Claude to write up (${changes.length}):`);
   changes.forEach((c) => console.log(`  - ${c.status}: ${c.path}`));
   process.exit(0);
 }
 if (!process.env.CLAUDE_CODE_OAUTH_TOKEN) {
-  console.log('CLAUDE_CODE_OAUTH_TOKEN is not set — skipping AI authorship for this local run.');
+  warn('CLAUDE_CODE_OAUTH_TOKEN is not set — SKIPPING AI business-doc authorship, so docs/business/ will not be updated. ' +
+    `${changes.length} changed file(s) stay queued (lastAuthoredCommit not advanced) until a run has the token. ` +
+    'In GitHub Actions: add the CLAUDE_CODE_OAUTH_TOKEN repo secret (Settings -> Secrets and variables -> Actions), generated locally with `claude setup-token`.');
   console.log('Generate one with `claude setup-token` (needs a Pro/Max/Team/Enterprise plan) and export it,');
   console.log('or set it as a repo secret for the GitHub Actions workflow.');
   process.exit(0);
@@ -172,7 +213,7 @@ You are updating docs for ONE feature area: "${featureTitle}"${batchCount > 1 ? 
 
 ${isBaseline
   ? `This is the initial documentation baseline (commit ${headSha.slice(0, 7)}) — the force-app files below\nare this feature's full current membership, not necessarily all newly written today:`
-  : `The following force-app files changed for this feature between commit ${state.lastDocumentedCommit.slice(0, 7)}\nand ${headSha.slice(0, 7)} (status: Added/Modified/Removed/Renamed):`}
+  : `The following force-app files changed for this feature between commit ${lastAuthored.slice(0, 7)}\nand ${headSha.slice(0, 7)} (status: Added/Modified/Removed/Renamed):`}
 
 ${manifest}
 
@@ -218,7 +259,7 @@ console.log(`Asking Claude to update docs/business/ for ${changes.length} change
 // below must only catch files that become dirty DURING this script (i.e. Claude's own
 // doing), or it would revert that upstream work right before the later commit step
 // ever sees it.
-const dirtyBefore = new Set((sh('git status --porcelain') || '').split('\n').filter(Boolean).map((line) => line.slice(3).trim()));
+const dirtyBefore = new Set(dirtyPaths());
 
 let batchNumber = 0;
 let failures = 0;
@@ -228,12 +269,23 @@ for (const [featureTitle, list] of groups) {
     batchNumber++;
     console.log(`[${batchNumber}/${totalBatches}] Feature "${featureTitle}" — ${batches[i].length} file(s)...`);
     const prompt = buildPrompt(featureTitle, batches[i], i, batches.length);
-    const result = spawnSync('claude', ['-p', prompt, '--allowedTools', 'Read,Write,Edit', '--permission-mode', 'acceptEdits'], {
+    // Sonnet-only, everywhere: ANTHROPIC_MODEL comes from the workflow env when
+    // set (also 'sonnet' there), and local runs without it default to the same
+    // 'sonnet' alias here — the latest Sonnet model, never the plan default.
+    // --fallback-model keeps an unattended run alive if the latest Sonnet is
+    // temporarily overloaded, retrying on the previous Sonnet generation so the
+    // run still never leaves the Sonnet family.
+    const result = spawnSync('claude', ['-p', prompt, '--allowedTools', 'Read,Write,Edit', '--permission-mode', 'acceptEdits', '--fallback-model', 'claude-sonnet-4-5'], {
       cwd: ROOT,
       stdio: 'inherit',
-      env: process.env,
+      env: { ...process.env, ANTHROPIC_MODEL: process.env.ANTHROPIC_MODEL || 'sonnet' },
     });
-    if (result.status !== 0) {
+    if (result.error) {
+      // e.g. ENOENT: the CLI resolved via the shell for the --version probe but not
+      // for spawnSync (happens on Windows where `claude` is a .cmd shim).
+      console.error(`  failed to launch claude for this batch: ${result.error.message} — continuing with the remaining batches.`);
+      failures++;
+    } else if (result.status !== 0) {
       console.error(`  claude exited with status ${result.status} for this batch — continuing with the remaining batches.`);
       failures++;
     }
@@ -244,17 +296,32 @@ for (const [featureTitle, list] of groups) {
 // outside docs/business/ was touched before the workflow commits anything. Only files
 // that are NEWLY dirty since dirtyBefore count — anything already dirty (technical
 // docs regenerated earlier in this pipeline) is left alone.
-const dirtyAfter = (sh('git status --porcelain') || '').split('\n').filter(Boolean);
-const outOfScope = dirtyAfter
-  .map((line) => line.slice(3).trim())
-  .filter((f) => f && !f.startsWith('docs/business/') && !dirtyBefore.has(f));
+const outOfScope = dirtyPaths().filter((f) => !f.startsWith('docs/business/') && !dirtyBefore.has(f));
 
 if (outOfScope.length) {
   console.warn(`Claude touched ${outOfScope.length} file(s) outside docs/business/ — reverting those:`);
   outOfScope.forEach((f) => {
     console.warn(`  - ${f}`);
-    sh(`git checkout -- "${f}"`);
+    if (sh(`git ls-files --error-unmatch "${f}"`) !== null) {
+      sh(`git checkout -- "${f}"`); // tracked: restore the committed content
+    } else {
+      // untracked (newly created outside docs/business): git checkout can't touch
+      // it — delete it outright so it never reaches the commit/PR steps.
+      try { fs.rmSync(path.join(ROOT, f), { recursive: true, force: true }); } catch (e) { console.warn(`    could not remove: ${e.message}`); }
+    }
   });
+}
+
+// Only now — after every batch actually ran — advance this script's own progress
+// marker. On failure it stays put, so the failed batches' files are re-included in
+// the next run's diff instead of being silently skipped forever. (Written AFTER the
+// safety net above, which would otherwise see the state file as a newly-dirty
+// out-of-scope path and revert it.)
+if (failures === 0) {
+  saveState({ lastAuthoredCommit: headSha });
+  console.log(`Recorded lastAuthoredCommit=${headSha.slice(0, 7)} in docs/_state/progress.json.`);
+} else {
+  warn(`${failures} of ${totalBatches} business-doc batch(es) failed — NOT advancing lastAuthoredCommit; the next run will retry the affected files.`);
 }
 
 console.log(`AI business-doc authorship step complete${failures ? ` (${failures} of ${totalBatches} batch(es) failed — see log above)` : ''}.`);

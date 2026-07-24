@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr *)",
+      "PowerShell(gh --version)",
+      "PowerShell(gh run list --limit 10 --json databaseId,displayTitle,conclusion,workflowName,createdAt)",
+      "Bash(git ls-remote *)",
+      "Bash(curl -s \"https://api.github.com/repos/JayOnBlue/Test-Documentation-Lead-to-Cash/actions/runs?per_page=10\")",
+      "Bash(python -c ' *)",
+      "Bash(curl -sL -w \"HTTP:%{http_code}\" \"https://api.github.com/repos/JayOnBlue/Test-Documentation-Lead-to-Cash/actions/runs/30121273623/logs\" -o run2-logs.zip)",
+      "Bash(git credential *)",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({'total': d.get\\('total_count'\\), 'names': [s['name'] for s in d.get\\('secrets',[]\\)]} if 'secrets' in d else d, indent=1\\)\\)\")",
+      "Bash(node --check docs/scripts/generate-changelog.js)",
+      "Bash(node --check docs/scripts/author-business-docs.mjs)",
+      "Bash(python -c \"import yaml; yaml.safe_load\\(open\\('.github/workflows/docs-pipeline.yml'\\)\\); print\\('YAML OK'\\)\")",
+      "Bash(grep -iA2 \"model\")",
+      "Bash(claude --version)",
+      "WebFetch(domain:support.claude.com)",
+      "WebFetch(domain:www.explainx.ai)"
+    ]
+  }
+}

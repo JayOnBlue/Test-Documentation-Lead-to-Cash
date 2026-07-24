@@ -32,7 +32,7 @@ function sh(cmd) {
 }
 
 function loadState() {
-  try { return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')); } catch (e) { return { lastDocumentedCommit: null }; }
+  try { return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')); } catch (e) { return {}; }
 }
 
 function saveState(state) {
@@ -52,12 +52,25 @@ const state = loadState();
 const headSha = sh('git rev-parse HEAD');
 const inGitRepo = headSha !== null;
 
+// This script's own progress key. It used to be the shared "lastDocumentedCommit",
+// which author-business-docs.mjs ALSO read — so this script advancing it marked
+// work as documented that the (skipped or failed) AI step never wrote. Each script
+// now owns its key; the legacy name is still read once as a fallback so existing
+// repos don't get a duplicate changelog entry after upgrading.
+const lastChangelogged = state.lastChangelogCommit || state.lastDocumentedCommit || null;
+
+function advanceState() {
+  const next = { ...loadState(), lastChangelogCommit: headSha };
+  delete next.lastDocumentedCommit; // legacy shared key — superseded by lastChangelogCommit + lastAuthoredCommit
+  saveState(next);
+}
+
 const STATUS_LABEL = { A: 'Added', M: 'Modified', D: 'Removed', R: 'Renamed' };
 const GROUP_FOR_STATUS = { Added: 'Added', Modified: 'Changed', Removed: 'Removed', Renamed: 'Changed' };
 const entries = []; // { status, type, name, path }
 
-if (inGitRepo && state.lastDocumentedCommit && sh(`git cat-file -e ${state.lastDocumentedCommit}`) !== null) {
-  const diff = sh(`git diff --name-status ${state.lastDocumentedCommit}..${headSha} -- force-app`) || '';
+if (inGitRepo && lastChangelogged && sh(`git cat-file -e ${lastChangelogged}`) !== null) {
+  const diff = sh(`git diff --name-status ${lastChangelogged}..${headSha} -- force-app`) || '';
   for (const line of diff.split('\n').filter(Boolean)) {
     const [statusRaw, ...pathParts] = line.split('\t');
     const filePath = pathParts[pathParts.length - 1];
@@ -84,7 +97,7 @@ const deduped = entries.filter((e) => {
 
 if (deduped.length === 0) {
   console.log('No force-app changes since the last documented commit — changelog untouched.');
-  if (inGitRepo) saveState({ ...state, lastDocumentedCommit: headSha });
+  if (inGitRepo) advanceState();
   process.exit(0);
 }
 
@@ -93,10 +106,10 @@ const releaseNumber = (existingChangelog.match(/^## v\d+/gm) || []).length + 1;
 const dateStr = new Date().toISOString().slice(0, 10);
 const shortSha = headSha ? headSha.slice(0, 7) : 'local';
 
-const isBaseline = !inGitRepo || !state.lastDocumentedCommit;
+const isBaseline = !inGitRepo || !lastChangelogged;
 const contributors = isBaseline
   ? (sh('git log -1 --format=%an') ? [sh('git log -1 --format=%an')] : ['local'])
-  : Array.from(new Set((sh(`git log --format=%an ${state.lastDocumentedCommit}..${headSha}`) || '').split('\n').filter(Boolean)));
+  : Array.from(new Set((sh(`git log --format=%an ${lastChangelogged}..${headSha}`) || '').split('\n').filter(Boolean)));
 
 const grouped = { Added: [], Changed: [], Removed: [] };
 for (const e of deduped) grouped[GROUP_FOR_STATUS[e.status]].push(e);
@@ -112,8 +125,8 @@ const lines = [];
 lines.push(`## v${releaseNumber} — ${dateStr}${inGitRepo ? ` — ${shortSha}` : ''}`, '');
 lines.push(`**Contributors:** ${contributors.join(', ')}`, '');
 if (!isBaseline) {
-  const cmp = compareUrl(state.lastDocumentedCommit.slice(0, 7), shortSha);
-  if (cmp) lines.push(`**Compare:** [${state.lastDocumentedCommit.slice(0, 7)}...${shortSha}](${cmp})`, '');
+  const cmp = compareUrl(lastChangelogged.slice(0, 7), shortSha);
+  if (cmp) lines.push(`**Compare:** [${lastChangelogged.slice(0, 7)}...${shortSha}](${cmp})`, '');
 }
 lines.push(`**Technical summary:** ${impact.technicalText}`, '');
 lines.push(`**Business summary:** ${impact.businessText}`, '');
@@ -141,5 +154,5 @@ fs.writeFileSync(CHANGELOG_FILE, output);
 console.log(`docs/CHANGELOG.md updated — v${releaseNumber}, ${deduped.length} changed component(s)`);
 
 if (inGitRepo) {
-  saveState({ ...state, lastDocumentedCommit: headSha });
+  advanceState();
 }
