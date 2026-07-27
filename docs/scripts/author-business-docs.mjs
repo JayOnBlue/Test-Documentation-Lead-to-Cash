@@ -208,6 +208,19 @@ if (!hasClaudeCli) {
   changes.forEach((c) => console.log(`  - ${c.status}: ${c.path}`));
   process.exit(0);
 }
+// Hard requirement: this pipeline bills against a Claude Pro/Max SUBSCRIPTION, never
+// a pay-per-token API key. The CLI will happily authenticate with ANTHROPIC_API_KEY /
+// ANTHROPIC_AUTH_TOKEN if either is present in the environment, which would silently
+// move every call in this run onto metered API billing. Refuse to start instead.
+const apiKeyVars = ['ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'ANTHROPIC_BEDROCK_BASE_URL', 'CLAUDE_CODE_USE_BEDROCK', 'CLAUDE_CODE_USE_VERTEX']
+  .filter((v) => process.env[v]);
+if (apiKeyVars.length) {
+  console.error(`::error::Refusing to run: ${apiKeyVars.join(', ')} is set in the environment. ` +
+    'The CLI would authenticate with that instead of the subscription token, putting this run on ' +
+    'metered pay-per-token billing. Unset it so CLAUDE_CODE_OAUTH_TOKEN is used.');
+  process.exit(1);
+}
+
 if (!process.env.CLAUDE_CODE_OAUTH_TOKEN) {
   warn('CLAUDE_CODE_OAUTH_TOKEN is not set — SKIPPING AI business-doc authorship, so docs/business/ will not be updated. ' +
     `${changes.length} component(s) stay queued until a run has the token. ` +

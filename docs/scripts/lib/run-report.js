@@ -31,8 +31,15 @@ function fmtTokens(n) {
   return String(n);
 }
 
+/**
+ * The CLI reports `total_cost_usd`: what these tokens WOULD list for on the
+ * pay-per-token API. When authenticating with a subscription OAuth token (which is
+ * what this pipeline does) nothing is billed per token — the usage draws on the
+ * plan's own limits instead. Label it as notional so a run summary never reads like
+ * an invoice.
+ */
 function fmtCost(usd) {
-  return usd == null ? '—' : `$${usd.toFixed(4)}`;
+  return usd == null ? '—' : `~$${usd.toFixed(4)}`;
 }
 
 class RunReport {
@@ -120,7 +127,7 @@ class RunReport {
     out.push(`| Output tokens | ${fmtTokens(t.output)} |`);
     out.push(`| Cache read / written | ${fmtTokens(t.cacheRead)} / ${fmtTokens(t.cacheWrite)} |`);
     out.push(`| Cache hit rate | ${(t.cacheHitRate * 100).toFixed(0)}% |`);
-    out.push(`| Cost | ${fmtCost(t.costUsd)} |`);
+    out.push(`| Cost (under free tier) | ${fmtCost(t.costUsd)} |`);
     out.push(`| Filtered before any model call | ${this.skipped.length} component(s) |`);
     if (t.permissionDenials) {
       out.push(`| ⚠️ Tool permission denials | ${t.permissionDenials} — an agent wanted a tool the allowlist refused; it wastes turns, so widen DOC_TOOLS or tighten the prompt |`);
@@ -161,6 +168,9 @@ class RunReport {
     }
 
     for (const n of this.notes) out.push(`> ${n}`);
+    out.push('');
+    out.push('<sub>Cost is an estimate at API list price, shown to compare runs — it is not billed: ' +
+      'calls use the `CLAUDE_CODE_OAUTH_TOKEN` subscription, and a public repo\'s Actions minutes are free.</sub>');
     return out.join('\n');
   }
 

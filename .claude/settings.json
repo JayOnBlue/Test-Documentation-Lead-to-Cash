@@ -60,7 +60,15 @@
       "Bash(node docs/scripts/build-site.js)",
       "Bash(rm -rf docs/business/stubbed docs/_state/progress.json docs/_state/run-report.json)",
       "Bash(cp -r \"c:/Jay/Github/Test-Documentation-Lead-to-Cash/docs/scripts/.\" docs/scripts/)",
-      "Bash(CLAUDE_CLI_BIN=C:/Users/jayma/AppData/Local/Temp/claude/c--Jay-Github-Test-Documentation-Lead-to-Cash/784cfe82-c8e1-4e91-af5f-7f3d06d4bbf2/scratchpad/stub/claude-stub.cmd CLAUDE_CODE_OAUTH_TOKEN=dummy STUB_DELAY_MS=2000 DOCS_AI_CONCURRENCY=6 timeout 110 node docs/scripts/author-business-docs.mjs)"
+      "Bash(CLAUDE_CLI_BIN=C:/Users/jayma/AppData/Local/Temp/claude/c--Jay-Github-Test-Documentation-Lead-to-Cash/784cfe82-c8e1-4e91-af5f-7f3d06d4bbf2/scratchpad/stub/claude-stub.cmd CLAUDE_CODE_OAUTH_TOKEN=dummy STUB_DELAY_MS=2000 DOCS_AI_CONCURRENCY=6 timeout 110 node docs/scripts/author-business-docs.mjs)",
+      "Bash(cp \"c:/Jay/Github/Test-Documentation-Lead-to-Cash/docs/scripts/lib/run-report.js\" docs/scripts/lib/)",
+      "Bash(rm -rf docs/business/stubbed docs/_state/progress.json)",
+      "Bash(CLAUDE_CLI_BIN=C:/Users/jayma/AppData/Local/Temp/claude/c--Jay-Github-Test-Documentation-Lead-to-Cash/784cfe82-c8e1-4e91-af5f-7f3d06d4bbf2/scratchpad/stub/claude-stub.cmd CLAUDE_CODE_OAUTH_TOKEN=dummy STUB_DELAY_MS=200 timeout 90 node docs/scripts/author-business-docs.mjs)",
+      "Bash(cp \"c:/Jay/Github/Test-Documentation-Lead-to-Cash/docs/scripts/author-business-docs.mjs\" docs/scripts/)",
+      "Bash(rm -f docs/_state/progress.json)",
+      "Bash(CLAUDE_CLI_BIN=C:/Users/jayma/AppData/Local/Temp/claude/c--Jay-Github-Test-Documentation-Lead-to-Cash/784cfe82-c8e1-4e91-af5f-7f3d06d4bbf2/scratchpad/stub/claude-stub.cmd CLAUDE_CODE_OAUTH_TOKEN=dummy ANTHROPIC_API_KEY=sk-ant-api03-fake timeout 40 node docs/scripts/author-business-docs.mjs)",
+      "Bash(rm -rf \"C:/Users/jayma/AppData/Local/Temp/claude/c--Jay-Github-Test-Documentation-Lead-to-Cash/784cfe82-c8e1-4e91-af5f-7f3d06d4bbf2/scratchpad/ptest\" \"C:/Users/jayma/AppData/Local/Temp/claude/c--Jay-Github-Test-Documentation-Lead-to-Cash/784cfe82-c8e1-4e91-af5f-7f3d06d4bbf2/scratchpad/vtest\")",
+      "Bash(node -e ' *)"
     ]
   }
 }
