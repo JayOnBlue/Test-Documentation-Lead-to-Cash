@@ -28,9 +28,11 @@ docs/
 ├── images/              Captured screenshots, one <screenshot-id>.png per documented step.
 ├── screenshot-manifest.json   Generated index of every screenshot block across the business docs —
 │                        the single input the screenshot workflow reads.
-├── _state/              Pipeline state — two independent progress markers: lastChangelogCommit
-│                        (changelog generator) and lastAuthoredCommit (AI business-doc step), so a
-│                        skipped/failed AI run never loses its queued work to the changelog advancing.
+├── _state/              Pipeline state. progress.json holds two independent progress markers —
+│                        lastChangelogCommit (changelog) and lastAuthoredCommit (AI step), so a
+│                        skipped/failed AI run never loses queued work to the changelog advancing —
+│                        plus a per-component content-hash cache. run-report.json is the last AI
+│                        run's metrics (calls, tokens, cache hits, cost, failures).
 ├── site/                Build output for GitHub Pages (git-ignored, rebuilt every run).
 ├── scripts/             All pipeline code (Node.js, no build step).
 ├── capture/             The screenshot capture harness (CumulusCI + Robot Framework + Playwright)
@@ -48,14 +50,58 @@ is merged — that merge touches nothing under `force-app/`.
 
 1. Scans `force-app` and regenerates the technical reference, version history and changelog
    (all deterministic — same input, same output).
-2. Asks AI to update **only** the affected business docs — it diffs against the last documented
-   commit (`_state/progress.json`), so a 2-file commit updates just the docs for those 2 files,
-   never the whole library. A brand-new repository gets a full baseline sweep automatically.
-   AI-written prose always lands as a **pull request** for human review, never a direct commit.
+2. Asks AI to update **only** the affected business docs (see below). AI-written prose always
+   lands as a **pull request** for human review, never a direct commit.
 3. Rebuilds the site and deploys it to GitHub Pages.
 
 The workflow commits only Markdown and the generated JSON/Markdown indexes above — all code
 (scripts, site shell) is prebuilt in the repository and never modified by automation.
+
+#### How the AI step is structured (and why)
+
+The AI step is the only part of this pipeline whose cost grows with the codebase — the
+deterministic steps finish in about a second even on a large org. Its first production run took
+**23 minutes for 85 components**: one sequential loop of six calls, of which a single 60-file call
+took 12.7 minutes on its own, and every call re-derived facts the pipeline had already computed.
+It is now four stages, and the expensive one runs in parallel:
+
+| Stage | Model? | What it does |
+|---|---|---|
+| **0. Triage** | no | Drops what can never be user-facing (test classes, `-meta.xml` sidecars, non-behavioral config), then drops anything whose **normalized** source hash is unchanged since it was last documented. Comment and whitespace edits cost zero calls. |
+| **1. Plan** | yes, parallel | Components are bin-packed into a few calls that return **JSON only** — create / update / skip per page, with the components each page covers. Small output, so these are fast. |
+| **2. Write** | yes, parallel | **One call per page**, never per batch of files. Each call owns exactly one file, which is what makes parallelism safe — two workers can never write the same page. |
+| **3. Verify** | no | Frontmatter parses, required sections present, nothing written outside `docs/business/`. A page that fails is not recorded as done, so the next run retries it. |
+
+Two things make the model calls cheaper rather than just more numerous:
+
+- **A context pack replaces agentic search.** `docs/technical/data.json` already holds the call
+  graph, so each prompt is handed the component's methods, callers (excluding tests), callees,
+  entry points (`@AuraEnabled`, `@RestResource`, `Schedulable`, trigger, LWC) and the exact path of
+  the page that already documents it. The old prompt made the agent grep the repo to answer all of
+  that — on one call it grepped every LWC, flow and trigger just to conclude "dead code".
+- **Prompts are ordered static-content-first.** Prompt caching matches on an exact prefix, so the
+  fixed preamble (template, rules, output schema) comes first and the per-call payload last. The
+  pool also runs its first call alone before fanning out, because a cache entry only becomes
+  readable once the first response has begun — firing N cold calls at once guarantees N misses.
+  `--exclude-dynamic-system-prompt-sections` keeps per-machine details (cwd, git status) out of the
+  cached prefix so separate CLI processes can share it.
+
+Progress is tracked **per component**, not by a single commit pointer, so a partial failure
+re-queues only the components that actually failed.
+
+Every run writes `_state/run-report.json` and a table to the GitHub Actions run summary: per-call
+status, duration, turns, token usage, cache-hit rate and cost, plus what triage filtered out and
+how much faster the parallel run was than the same work serially. Tool **permission denials** are
+reported too — a non-zero count means an agent wanted a tool the allowlist refused, which is what
+stalled the original 60-file call.
+
+Tuning knobs (environment variables on the workflow step): `DOCS_AI_CONCURRENCY` (default 4 —
+subscription rate limits, not correctness, are the ceiling), `DOCS_PLAN_BATCH` (components per
+planning call, default 40), `DOCS_MAX_PAGES` (pages per run, default 200 — the overflow drains on
+later runs), `DOCS_AI_TIMEOUT_MS` (per-call wall clock, default 10 min) and `CLAUDE_CLI_BIN`
+(absolute path to the CLI, or a stub for testing). Bump `PROMPT_VERSION` in
+`scripts/author-business-docs.mjs` after editing a prompt — it is part of the cache key, so raising
+it correctly invalidates previously generated pages.
 
 ### 2. Screenshot capture — `.github/workflows/sf-screenshots.yml`
 

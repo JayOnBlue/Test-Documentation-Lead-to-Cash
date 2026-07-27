@@ -127,8 +127,15 @@
     return business.categories.filter(function (c) { return keep.indexOf(c) !== -1; });
   }
 
+  function landingPage() { return business.pages.filter(function (p) { return p.isLanding; })[0] || null; }
+
   function renderSidebarBusiness(route) {
-    var activeSlug = route.name === 'article' ? route.page : (route.name === 'overview' ? business.pages.find(function (p) { return p.isLanding; }).slug : null);
+    // NOTE: landingPage() may legitimately be null (a docs set with no
+    // "Getting Started / overview" page). This used to read .slug straight off
+    // the find() result, so a missing landing page threw a TypeError here — which
+    // aborted the whole render and left the site showing an empty shell.
+    var landing = landingPage();
+    var activeSlug = route.name === 'article' ? route.page : (route.name === 'overview' && landing ? landing.slug : null);
     var cats = visibleCategories();
     var banner = state.role !== 'all'
       ? '<div class="role-banner">Viewing as: ' + esc(state.role) + '<button type="button" id="clear-role">&times;</button></div>'
@@ -402,8 +409,17 @@
   }
 
   function renderOverview() {
-    var page = business.pages.find(function (p) { return p.isLanding; });
-    if (page) renderBusinessPage(page, true);
+    var page = landingPage();
+    if (page) { renderBusinessPage(page, true); return; }
+    // No authored landing page: still give the home route something real — the
+    // role picker, glossary and per-category cards — instead of a blank pane.
+    qs('#main').innerHTML = '<div class="prose-width">' +
+      '<div class="crumbs"><span>Docs</span></div>' +
+      '<h1 class="page-title">' + esc(DATA.siteName || 'Documentation') + '</h1>' +
+      '<p class="page-subtitle">Business and use-case documentation, generated from the Salesforce metadata in this repository.</p>' +
+      renderRoleAndGlossaryAndCards() + '</div>';
+    qsa('[data-role]').forEach(function (btn) { btn.addEventListener('click', function () { setRole(btn.getAttribute('data-role')); }); });
+    buildTOC([{ id: 'browse-by-area', text: 'Browse by area' }]);
   }
 
   function renderArticle(route) {
