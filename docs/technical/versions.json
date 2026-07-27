@@ -1,13 +1,59 @@
 {
   "versions": [
     {
+      "version": "v7",
+      "hash": "af06f16",
+      "when": "2026-07-28T00:10:59+05:30",
+      "author": "JayOnBlue",
+      "initials": "J",
+      "avatarBg": "#2563eb",
+      "latest": true,
+      "summary": "Add healthForAccount method to AccountHealthScoreService",
+      "description": "",
+      "filesChanged": 1,
+      "additions": 1,
+      "deletions": 0,
+      "added": [],
+      "modified": [
+        "AccountHealthScoreService"
+      ],
+      "removed": [],
+      "technicalSummary": "Modified 1 (1 ApexClass).",
+      "businessSummary": "Likely affects: Account Health Score & related.",
+      "businessFeatures": [
+        "Account Health Score & related"
+      ]
+    },
+    {
+      "version": "v6",
+      "hash": "8b134a2",
+      "when": "2026-07-27T23:00:47+05:30",
+      "author": "JayOnBlue",
+      "initials": "J",
+      "avatarBg": "#2563eb",
+      "latest": false,
+      "summary": "Fix merge logic in AccountMergeUtility class",
+      "description": "",
+      "filesChanged": 1,
+      "additions": 0,
+      "deletions": 1,
+      "added": [],
+      "modified": [
+        "AccountMergeUtility"
+      ],
+      "removed": [],
+      "technicalSummary": "Modified 1 (1 ApexClass).",
+      "businessSummary": "No mapped business feature yet (not yet clustered into a Feature).",
+      "businessFeatures": []
+    },
+    {
       "version": "v5",
       "hash": "4e6d44d",
       "when": "2026-07-27T20:45:09+05:30",
       "author": "JayOnBlue",
       "initials": "J",
       "avatarBg": "#2563eb",
-      "latest": true,
+      "latest": false,
       "summary": "Fix merge logic in AccountMergeUtility class",
       "description": "",
       "filesChanged": 1,

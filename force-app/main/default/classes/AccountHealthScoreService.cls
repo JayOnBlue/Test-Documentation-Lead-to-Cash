@@ -29,6 +29,7 @@ public with sharing class AccountHealthScoreService {
         return score;
     }
 
+
     @AuraEnabled(cacheable=true)
     public static Integer healthForAccount(Id accountId) {
         return healthFor(new Set<Id>{ accountId }).get(accountId);
