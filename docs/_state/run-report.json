@@ -1,13 +1,13 @@
 {
   "meta": {
-    "startedAt": "2026-07-27T15:15:27.221Z",
-    "headSha": "4e6d44d503c61ea247fe3182a1fe504e22af9572",
+    "startedAt": "2026-07-27T17:31:09.491Z",
+    "headSha": "8b134a21557b7b1b2f72fd92be061b6aefac56e5",
     "baseline": false,
     "model": "sonnet",
     "concurrency": 4,
     "cachedPages": 0,
-    "finishedAt": "2026-07-27T15:15:30.967Z",
-    "wallMs": 3616
+    "finishedAt": "2026-07-27T17:31:13.388Z",
+    "wallMs": 3777
   },
   "totals": {
     "calls": 1,
@@ -15,12 +15,12 @@
     "failed": 0,
     "retried": 0,
     "input": 2,
-    "output": 113,
+    "output": 128,
     "cacheRead": 0,
-    "cacheWrite": 25881,
-    "costUsd": 0.15698700000000002,
+    "cacheWrite": 25890,
+    "costUsd": 0.15726600000000002,
     "permissionDenials": 0,
-    "serialMs": 2736,
+    "serialMs": 2975,
     "cacheHitRate": 0
   },
   "calls": [
@@ -29,24 +29,24 @@
       "label": "plan 1/1 (1 components)",
       "ok": true,
       "error": null,
-      "durationMs": 2736,
+      "durationMs": 2975,
       "turns": 1,
-      "costUsd": 0.15698700000000002,
+      "costUsd": 0.15726600000000002,
       "attempts": 1,
       "model": "claude-sonnet-5",
       "permissionDenials": 0,
       "usage": {
         "input": 2,
-        "output": 113,
+        "output": 128,
         "cacheRead": 0,
-        "cacheWrite": 25881
+        "cacheWrite": 25890
       }
     }
   ],
   "skipped": [
     {
       "name": "AccountMergeUtility",
-      "reason": "planner: No entry points or production callers detected; dead code with no user-facing behavior to document."
+      "reason": "planner: Dead code with no entry point or production callers, so no user-facing behavior to document."
     }
   ],
   "notes": []
