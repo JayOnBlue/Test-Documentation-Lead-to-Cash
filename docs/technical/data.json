@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-27T17:31:06.235Z",
-  "version": 7,
+  "generatedAt": "2026-07-27T18:41:16.271Z",
+  "version": 8,
   "componentCount": 85,
   "edgeCount": 88,
   "componentsByType": {
@@ -20,7 +20,7 @@
       "name": "AccountHealthScoreService",
       "type": "ApexClass",
       "path": "classes/AccountHealthScoreService.cls",
-      "updated": "2026-07-25T02:12:25+05:30",
+      "updated": "2026-07-28T00:10:59+05:30",
       "isTestClass": false,
       "coverage": 85,
       "health": "good",

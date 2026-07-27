@@ -2,6 +2,22 @@
 
 Generated from force-app metadata changes on every push to main. Newest first (each release is prepended).
 
+## v6 — 2026-07-27 — af06f16
+
+**Contributors:** JayOnBlue, github-actions[bot]
+
+**Compare:** [8b134a2...af06f16](https://github.com/JayOnBlue/Test-Documentation-Lead-to-Cash/compare/8b134a2...af06f16)
+
+**Technical summary:** Changed 1 (1 ApexClass).
+
+**Business summary:** Likely affects: Account Health Score & related.
+
+**Business features:** Account Health Score & related
+
+### Changed
+
+- **ApexClass** `AccountHealthScoreService`
+
 ## v5 — 2026-07-27 — 8b134a2
 
 **Contributors:** JayOnBlue, github-actions[bot]
