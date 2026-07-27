@@ -67,7 +67,7 @@ It is now four stages, and the expensive one runs in parallel:
 
 | Stage | Model? | What it does |
 |---|---|---|
-| **0. Triage** | no | Drops what can never be user-facing (test classes, `-meta.xml` sidecars, non-behavioral config), then drops anything whose **normalized** source hash is unchanged since it was last documented. Comment and whitespace edits cost zero calls. |
+| **0. Triage** | no | Drops what can never be user-facing (test classes, `-meta.xml` sidecars, non-behavioral config), then drops anything whose **normalized** source hash is unchanged since it was last documented. Comment and whitespace edits cost zero calls. Finally **reconciles against disk** (see below). |
 | **1. Plan** | yes, parallel | Components are bin-packed into a few calls that return **JSON only** — create / update / skip per page, with the components each page covers. Small output, so these are fast. |
 | **2. Write** | yes, parallel | **One call per page**, never per batch of files. Each call owns exactly one file, which is what makes parallelism safe — two workers can never write the same page. |
 | **3. Verify** | no | Frontmatter parses, required sections present, nothing written outside `docs/business/`. A page that fails is not recorded as done, so the next run retries it. |
@@ -88,6 +88,28 @@ Two things make the model calls cheaper rather than just more numerous:
 
 Progress is tracked **per component**, not by a single commit pointer, so a partial failure
 re-queues only the components that actually failed.
+
+**Reconciliation — why the state can never drift from reality.** The cache records "component X is
+documented in page P", but P only reaches the repository when the review PR is *merged*. If PR
+creation is blocked (`Allow GitHub Actions to create and approve pull requests` disabled), the pages
+are committed to a side branch, `main` gets none of them, and the state file — which *is* committed
+to main — still says every component is done. Once `lastAuthoredCommit` moves past that point no
+future diff mentions those components again, so the gap becomes permanent. That happened here: four
+commits in a row ran the pipeline while `docs/business/` on main held nothing but `TEMPLATE.md`.
+
+So triage trusts the filesystem over the bookkeeping. Any component whose recorded page is missing
+from the checkout is re-queued **even when the diff is empty**, and its stale cache entry is dropped.
+For the same reason the step no longer exits early on an empty diff — that early exit was what let
+the gap survive. Two related guards: a component the planner mentions in *neither* a create/update
+nor a skip entry counts as a failure (so the marker holds and it is retried, rather than being
+silently dropped as it was on one real run), and a plan reply that will not parse as JSON is re-asked
+once for JSON only before the batch is deferred.
+
+If PR creation is refused, the workflow now also restores the generated pages into the working tree
+so the deploy includes them — labelled "Auto-generated" via `verified: false`, and never committed to
+main. Previously they were discarded at that point and the site published an empty business section
+despite the work having been done. Note that until the branch is merged, each run regenerates those
+pages; merging it (or enabling the PR setting) is what stops the repetition.
 
 Every run writes `_state/run-report.json` and a table to the GitHub Actions run summary: per-call
 status, duration, turns, token usage, cache-hit rate and cost, plus what triage filtered out and

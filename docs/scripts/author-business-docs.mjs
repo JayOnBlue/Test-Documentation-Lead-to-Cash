@@ -154,9 +154,13 @@ if (isBaseline) {
   }).filter(Boolean);
 }
 
+// NOTE: deliberately no early exit when the diff is empty. An empty diff does NOT
+// mean there is nothing to do — the reconciliation pass below still has to check that
+// the pages the state claims exist actually do. Bailing out here was what let a
+// documentation gap persist across four commits: nothing changed under force-app, so
+// the step exited immediately and never noticed that main had no business pages at all.
 if (rawChanges.length === 0) {
-  console.log('No force-app changes since the last authored commit — nothing for the AI step to write about.');
-  process.exit(0);
+  console.log('No force-app changes since the last authored commit — checking that recorded pages are still present.');
 }
 
 const ctx = createContext({ repoRoot: ROOT, techDataFile: TECH_DATA_FILE, businessDir: BUSINESS_DIR });
@@ -189,12 +193,57 @@ for (const ch of relevant) {
 }
 report.meta.cachedPages = cachedCount;
 
+// ---------------------------------------------------------------------------
+// Filter 3 — RECONCILIATION against what is actually on disk.
+//
+// This is the fix for a documentation gap that could otherwise become permanent.
+// The cache records "component X is documented in page P", but P only reaches the
+// repository if the review PR is merged. When PR creation is blocked (e.g. "GitHub
+// Actions is not permitted to create or approve pull requests"), the pages are
+// committed to a side branch, main keeps none of them — and yet the state file,
+// which IS committed to main, says all of them are done. Once lastAuthoredCommit
+// moves past that point, no future diff mentions those components again, so nothing
+// ever regenerates them: the docs are silently missing forever.
+//
+// So: trust the filesystem, not the bookkeeping. Any component whose recorded page
+// is absent gets re-queued even though it is not in this commit's diff, and its
+// stale cache entry is dropped.
+// ---------------------------------------------------------------------------
+const reconciled = [];
+for (const [name, entry] of Object.entries(componentState)) {
+  if (!entry || !entry.page) continue;                          // never produced a page
+  if (fs.existsSync(path.join(ROOT, entry.page))) continue;     // page is present — fine
+  if (changes.some((c) => c.name === name)) continue;           // already queued by the diff
+  const comp = ctx.componentsByName.get(name);
+  if (!comp || !comp.path) continue;                            // component no longer exists
+  const relPath = `force-app/main/default/${comp.path}`;
+  if (!fs.existsSync(path.join(ROOT, relPath))) continue;       // source is gone; nothing to document
+  delete componentState[name];
+  reconciled.push({
+    status: 'Modified',
+    type: comp.type,
+    name,
+    path: relPath,
+    hash: `${PROMPT_VERSION}:${hashFile(path.join(ROOT, relPath))}`,
+  });
+}
+if (reconciled.length) {
+  changes.push(...reconciled);
+  warn(`${reconciled.length} component(s) were recorded as documented but their page is missing from this ` +
+    'checkout — re-queuing them. This is what happens when the review branch is never merged: the pages live ' +
+    'on the branch, not on main. Until that branch is merged (or PR creation is enabled), every run will ' +
+    'regenerate them.');
+  report.note(`${reconciled.length} component(s) re-queued by reconciliation (recorded page missing on disk).`);
+}
+report.meta.reconciled = reconciled.length;
+
 console.log(`Triage: ${rawChanges.length} changed component(s) -> ${relevant.length} doc-relevant -> ${changes.length} needing work ` +
-  `(${report.skipped.length} filtered, ${cachedCount} unchanged since last documented).`);
+  `(${report.skipped.length} filtered, ${cachedCount} unchanged since last documented` +
+  `${reconciled.length ? `, ${reconciled.length} re-queued because their page is missing` : ''}).`);
 
 if (changes.length === 0) {
-  console.log('Everything already documented and unchanged — no model calls needed.');
-  saveState({ lastAuthoredCommit: headSha });
+  console.log('Everything already documented, unchanged, and present on disk — no model calls needed.');
+  saveState({ lastAuthoredCommit: headSha, components: componentState });
   report.finish(0).write({ jsonFile: REPORT_FILE });
   process.exit(0);
 }
@@ -331,10 +380,25 @@ const planResults = await pool(batches, async (batch, i) => {
   });
   report.addCall('plan', label, res);
   if (!res.ok) { console.error(`  ${label}: FAILED — ${res.error}`); return { batch, plan: null }; }
-  const parsed = extractJson(res.text);
+
+  let parsed = extractJson(res.text);
   if (!parsed || !Array.isArray(parsed.pages)) {
-    console.error(`  ${label}: could not parse a plan from the reply`);
-    return { batch, plan: null };
+    // A call can succeed and still return something unparseable (prose around the
+    // JSON, a truncated object). That happened on a real run and silently dropped a
+    // 40-component batch while the report still said every call succeeded — so
+    // re-ask once, JSON only, before giving up on this batch.
+    console.error(`  ${label}: reply was not parseable as a plan — re-asking for JSON only`);
+    const retry = await runClaudeWithRetry(
+      `${buildPlanPrompt(batch)}\n\n---- IMPORTANT ----\nA previous attempt returned unparseable output. ` +
+      `Reply with NOTHING except the single \`\`\`json fenced block described above. No preamble, no commentary.`,
+      runOpts, { retries: 1 },
+    );
+    report.addCall('plan', `${label} (reparse)`, retry);
+    parsed = retry.ok ? extractJson(retry.text) : null;
+    if (!parsed || !Array.isArray(parsed.pages)) {
+      console.error(`  ${label}: still unparseable — this batch stays queued for the next run`);
+      return { batch, plan: null };
+    }
   }
   console.log(`  ${label}: ${fmtDuration(res.durationMs)} — ${parsed.pages.length} planned entr(ies)`);
   return { batch, plan: parsed.pages };
@@ -370,6 +434,16 @@ for (const r of planResults) {
   }
 }
 
+// A component the planner never mentioned is not "skipped", it is UNACCOUNTED FOR —
+// and if the run were treated as clean, the progress marker would move past it and it
+// would never be looked at again. Count these as failures so the marker holds.
+const unplanned = changes.filter((c) => !plannedComponents.has(c.name)).map((c) => c.name);
+if (unplanned.length) {
+  warn(`${unplanned.length} component(s) were not covered by any plan entry: ${unplanned.slice(0, 10).join(', ')}` +
+    `${unplanned.length > 10 ? `, +${unplanned.length - 10} more` : ''}. Holding the progress marker so they are retried.`);
+  report.note(`${unplanned.length} component(s) unaccounted for by the planner.`);
+}
+
 let pages = Array.from(pagesByPath.values());
 if (pages.length > MAX_PAGES_PER_RUN) {
   warn(`Planner proposed ${pages.length} pages; capping this run at ${MAX_PAGES_PER_RUN}. ` +
@@ -379,7 +453,7 @@ if (pages.length > MAX_PAGES_PER_RUN) {
 
 if (!pages.length) {
   console.log('\nPlanner produced no pages to write (everything was internal or dead code).');
-  if (planFailures === 0) {
+  if (planFailures === 0 && unplanned.length === 0) {
     saveState({
       lastAuthoredCommit: headSha,
       components: { ...componentState, ...Object.fromEntries(changes.filter((c) => c.hash).map((c) => [c.name, { hash: c.hash, page: null }])) },
@@ -521,7 +595,7 @@ for (const page of succeeded) {
   }
 }
 
-const allClean = planFailures === 0 && writeFailures === 0 && verifyFailures === 0;
+const allClean = planFailures === 0 && writeFailures === 0 && verifyFailures === 0 && unplanned.length === 0;
 if (allClean) {
   saveState({ lastAuthoredCommit: headSha, components: nextComponents });
   console.log(`\nRecorded lastAuthoredCommit=${headSha.slice(0, 7)} and ${Object.keys(nextComponents).length} component hash(es).`);
@@ -529,8 +603,9 @@ if (allClean) {
   // Keep the per-component progress that DID succeed, but hold the commit pointer
   // back so the failed components are re-diffed next run.
   saveState({ components: nextComponents });
-  warn(`${planFailures} plan + ${writeFailures} write + ${verifyFailures} verify failure(s) — NOT advancing lastAuthoredCommit. ` +
-    'Successful pages are cached; the next run retries only what failed.');
+  warn(`${planFailures} plan + ${writeFailures} write + ${verifyFailures} verify failure(s)` +
+    `${unplanned.length ? ` + ${unplanned.length} component(s) unaccounted for by the planner` : ''} — ` +
+    'NOT advancing lastAuthoredCommit. Successful pages are cached; the next run retries only what failed.');
 }
 
 const wallMs = Date.now() - started;
