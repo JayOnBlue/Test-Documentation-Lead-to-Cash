@@ -1,0 +1,451 @@
+{
+  "meta": {
+    "startedAt": "2026-07-27T12:17:51.619Z",
+    "headSha": "d191644d578c5cec42f702f60f96e3a964aba6ac",
+    "baseline": true,
+    "model": "sonnet",
+    "concurrency": 4,
+    "cachedPages": 0,
+    "finishedAt": "2026-07-27T12:24:44.551Z",
+    "wallMs": 412811
+  },
+  "totals": {
+    "calls": 19,
+    "ok": 19,
+    "failed": 0,
+    "retried": 0,
+    "input": 210,
+    "output": 97274,
+    "cacheRead": 3246200,
+    "cacheWrite": 320614,
+    "costUsd": 4.357284,
+    "permissionDenials": 0,
+    "serialMs": 1123980,
+    "cacheHitRate": 0.9101119374321173
+  },
+  "calls": [
+    {
+      "kind": "plan",
+      "label": "plan 1/3 (10 components)",
+      "ok": true,
+      "error": null,
+      "durationMs": 25516,
+      "turns": 2,
+      "costUsd": 0.22726440000000003,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 4,
+        "output": 2752,
+        "cacheRead": 27248,
+        "cacheWrite": 29633
+      }
+    },
+    {
+      "kind": "plan",
+      "label": "plan 3/3 (22 components)",
+      "ok": true,
+      "error": null,
+      "durationMs": 99535,
+      "turns": 2,
+      "costUsd": 0.2751999,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 4,
+        "output": 10909,
+        "cacheRead": 51443,
+        "cacheWrite": 16020
+      }
+    },
+    {
+      "kind": "plan",
+      "label": "plan 2/3 (40 components)",
+      "ok": true,
+      "error": null,
+      "durationMs": 100463,
+      "turns": 2,
+      "costUsd": 0.3130317,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 4,
+        "output": 11773,
+        "cacheRead": 54769,
+        "cacheWrite": 19999
+      }
+    },
+    {
+      "kind": "write",
+      "label": "accounts/account-health-score.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 29364,
+      "turns": 5,
+      "costUsd": 0.1384893,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 2309,
+        "cacheRead": 141381,
+        "cacheWrite": 10235
+      }
+    },
+    {
+      "kind": "write",
+      "label": "opportunities/big-deal-alert.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 39770,
+      "turns": 6,
+      "costUsd": 0.15004889999999999,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 12,
+        "output": 2692,
+        "cacheRead": 170963,
+        "cacheWrite": 9724
+      }
+    },
+    {
+      "kind": "write",
+      "label": "leads/lead-followup-reminder.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 46663,
+      "turns": 3,
+      "costUsd": 0.14355810000000002,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 6,
+        "output": 3722,
+        "cacheRead": 79947,
+        "cacheWrite": 10621
+      }
+    },
+    {
+      "kind": "write",
+      "label": "orders/order-activation-confirmation.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 39725,
+      "turns": 6,
+      "costUsd": 0.1561737,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 12,
+        "output": 2544,
+        "cacheRead": 170399,
+        "cacheWrite": 11143
+      }
+    },
+    {
+      "kind": "write",
+      "label": "quotes/quote-expiry-alert.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 31446,
+      "turns": 7,
+      "costUsd": 0.1556766,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 12,
+        "output": 2469,
+        "cacheRead": 171312,
+        "cacheWrite": 11202
+      }
+    },
+    {
+      "kind": "write",
+      "label": "orders/order-status-api.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 80772,
+      "turns": 10,
+      "costUsd": 0.26962949999999997,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 20,
+        "output": 5963,
+        "cacheRead": 301075,
+        "cacheWrite": 14967
+      }
+    },
+    {
+      "kind": "write",
+      "label": "products/product-retirement-notice.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 42303,
+      "turns": 5,
+      "costUsd": 0.12814889999999998,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 2007,
+        "cacheRead": 139393,
+        "cacheWrite": 9366
+      }
+    },
+    {
+      "kind": "write",
+      "label": "sales-enablement/sales-playbook-banner.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 32112,
+      "turns": 6,
+      "costUsd": 0.11975369999999999,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 8,
+        "output": 2102,
+        "cacheRead": 109379,
+        "cacheWrite": 9231
+      }
+    },
+    {
+      "kind": "write",
+      "label": "contacts/primary-contact-role-sync.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 33930,
+      "turns": 6,
+      "costUsd": 0.1399221,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 8,
+        "output": 2831,
+        "cacheRead": 111517,
+        "cacheWrite": 10663
+      }
+    },
+    {
+      "kind": "write",
+      "label": "accounts/territory-and-tiering.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 45487,
+      "turns": 9,
+      "costUsd": 0.19319070000000002,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 4366,
+        "cacheRead": 147369,
+        "cacheWrite": 13910
+      }
+    },
+    {
+      "kind": "write",
+      "label": "operations/nightly-pipeline-maintenance-jobs.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 50764,
+      "turns": 10,
+      "costUsd": 0.2230629,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 4770,
+        "cacheRead": 155003,
+        "cacheWrite": 17497
+      }
+    },
+    {
+      "kind": "write",
+      "label": "leads/lead-capture-and-qualification.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 89838,
+      "turns": 13,
+      "costUsd": 0.2694555,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 12,
+        "output": 6184,
+        "cacheRead": 199465,
+        "cacheWrite": 19470
+      }
+    },
+    {
+      "kind": "write",
+      "label": "pricing/pricing-and-discount-rules-engine.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 62555,
+      "turns": 12,
+      "costUsd": 0.2839194,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 16,
+        "output": 5299,
+        "cacheRead": 261768,
+        "cacheWrite": 20976
+      }
+    },
+    {
+      "kind": "write",
+      "label": "opportunities/pricing-forecasting-and-stage-gates.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 74330,
+      "turns": 15,
+      "costUsd": 0.338241,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 16,
+        "output": 6685,
+        "cacheRead": 292160,
+        "cacheWrite": 25045
+      }
+    },
+    {
+      "kind": "write",
+      "label": "quotes/quote-approval-generation-and-sync.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 88122,
+      "turns": 19,
+      "costUsd": 0.41171820000000003,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 22,
+        "output": 7784,
+        "cacheRead": 416154,
+        "cacheWrite": 28341
+      }
+    },
+    {
+      "kind": "write",
+      "label": "orders/order-activation-fulfillment-and-revenue-recognition.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 111285,
+      "turns": 19,
+      "costUsd": 0.42079950000000005,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 14,
+        "output": 10113,
+        "cacheRead": 245455,
+        "cacheWrite": 32571
+      }
+    }
+  ],
+  "skipped": [
+    {
+      "name": "AccountHealthScoreServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "AccountTierServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "CustomerLifecycleOrchestratorTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "LeadConversionServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "LeadScoringServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "OpportunityPricingServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "OpportunityStageGuardServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "OrderActivationServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "OrderFromQuoteServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "PriceRuleEngineTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "PricebookSyncServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "QuoteGenerationServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "QuoteLineSyncServiceTest",
+      "reason": "test class — never user-facing documentation"
+    },
+    {
+      "name": "AccountMergeUtility",
+      "reason": "planner: No entry point and no production callers; dead code."
+    },
+    {
+      "name": "ProductBundleService",
+      "reason": "planner: No entry point and no production callers; dead code."
+    },
+    {
+      "name": "CustomerLifecycleOrchestrator",
+      "reason": "planner: CustomerLifecycleOrchestrator has no production callers and no entry point, and OrderFromQuoteService's only caller is that same dead orchestrator, so both are unreachable dead code."
+    },
+    {
+      "name": "OrderFromQuoteService",
+      "reason": "planner: CustomerLifecycleOrchestrator has no production callers and no entry point, and OrderFromQuoteService's only caller is that same dead orchestrator, so both are unreachable dead code."
+    },
+    {
+      "name": "CollectionUtils",
+      "reason": "planner: Pure internal helpers with no entry point of their own - a generic collection utility and a cross-cutting audit logger - whose effects are already reflected in the feature pages of the services that call them."
+    },
+    {
+      "name": "SalesOpsAuditService",
+      "reason": "planner: Pure internal helpers with no entry point of their own - a generic collection utility and a cross-cutting audit logger - whose effects are already reflected in the feature pages of the services that call them."
+    }
+  ],
+  "notes": [
+    "16 page(s) written and verified."
+  ]
+}

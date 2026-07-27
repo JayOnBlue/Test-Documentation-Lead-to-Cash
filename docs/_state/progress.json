@@ -1,3 +1,181 @@
 {
-  "lastDocumentedCommit": "494dc913148cbecfb47d2128814e72a070d22fde"
+  "components": {
+    "AccountHealthScoreService": {
+      "hash": "2:2c87bdd77498e70c",
+      "page": "docs/business/accounts/account-health-score.md"
+    },
+    "OrderStatusRestResource": {
+      "hash": "2:a85fe1089445eb24",
+      "page": "docs/business/orders/order-status-api.md"
+    },
+    "Big_Deal_Alert": {
+      "hash": "2:a8816eded1bfe836",
+      "page": "docs/business/opportunities/big-deal-alert.md"
+    },
+    "Lead_Followup_Reminder": {
+      "hash": "2:519364d6694e0f5a",
+      "page": "docs/business/leads/lead-followup-reminder.md"
+    },
+    "Order_Activation_Confirmation": {
+      "hash": "2:a3ae35b145f074df",
+      "page": "docs/business/orders/order-activation-confirmation.md"
+    },
+    "Product_Retirement_Notice": {
+      "hash": "2:33d902c6e2e648ca",
+      "page": "docs/business/products/product-retirement-notice.md"
+    },
+    "Quote_Expiry_Alert": {
+      "hash": "2:5867ecdf74e015b4",
+      "page": "docs/business/quotes/quote-expiry-alert.md"
+    },
+    "salesPlaybookBanner": {
+      "hash": "2:missing",
+      "page": "docs/business/sales-enablement/sales-playbook-banner.md"
+    },
+    "AccountTriggerHandler": {
+      "hash": "2:832c3f9d20accb34",
+      "page": "docs/business/accounts/territory-and-tiering.md"
+    },
+    "AccountTerritoryService": {
+      "hash": "2:927e0fab97e9ae13",
+      "page": "docs/business/accounts/territory-and-tiering.md"
+    },
+    "AccountTierService": {
+      "hash": "2:5da565e4b3279f85",
+      "page": "docs/business/accounts/territory-and-tiering.md"
+    },
+    "ContactTriggerHandler": {
+      "hash": "2:fb01c2f4def70f51",
+      "page": "docs/business/contacts/primary-contact-role-sync.md"
+    },
+    "ContactRoleSyncService": {
+      "hash": "2:471f1926eb1778cf",
+      "page": "docs/business/contacts/primary-contact-role-sync.md"
+    },
+    "LeadCaptureRestResource": {
+      "hash": "2:6f7dfdbcf9e0f913",
+      "page": "docs/business/leads/lead-capture-and-qualification.md"
+    },
+    "LeadDedupeService": {
+      "hash": "2:d825466dd80a01fb",
+      "page": "docs/business/leads/lead-capture-and-qualification.md"
+    },
+    "LeadScoringService": {
+      "hash": "2:5a2457c2c07c32df",
+      "page": "docs/business/leads/lead-capture-and-qualification.md"
+    },
+    "LeadAssignmentService": {
+      "hash": "2:77af08cdb8e2a230",
+      "page": "docs/business/leads/lead-capture-and-qualification.md"
+    },
+    "LeadTriggerHandler": {
+      "hash": "2:5c309395462ad9dc",
+      "page": "docs/business/leads/lead-capture-and-qualification.md"
+    },
+    "LeadConversionService": {
+      "hash": "2:5c10fe3e7292cfbe",
+      "page": "docs/business/leads/lead-capture-and-qualification.md"
+    },
+    "NightlyPipelineJobsSchedulable": {
+      "hash": "2:ba4f2268d73320b6",
+      "page": "docs/business/operations/nightly-pipeline-maintenance-jobs.md"
+    },
+    "LeadNurtureBatch": {
+      "hash": "2:cdb1cca69e7188cf",
+      "page": "docs/business/operations/nightly-pipeline-maintenance-jobs.md"
+    },
+    "LeadNurtureQueueable": {
+      "hash": "2:24fea973fb3c6b1d",
+      "page": "docs/business/operations/nightly-pipeline-maintenance-jobs.md"
+    },
+    "PipelineSnapshotBatch": {
+      "hash": "2:890293f253fd0a91",
+      "page": "docs/business/operations/nightly-pipeline-maintenance-jobs.md"
+    },
+    "QuoteExpiryBatch": {
+      "hash": "2:24cae71409fb2960",
+      "page": "docs/business/operations/nightly-pipeline-maintenance-jobs.md"
+    },
+    "StaleOpportunityBatch": {
+      "hash": "2:cd5fdbb1e5587a06",
+      "page": "docs/business/operations/nightly-pipeline-maintenance-jobs.md"
+    },
+    "PriceRuleEngine": {
+      "hash": "2:aa5368d9fd9e107f",
+      "page": "docs/business/pricing/pricing-and-discount-rules-engine.md"
+    },
+    "OpportunityTriggerHandler": {
+      "hash": "2:e1379b8d1d9eafc4",
+      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+    },
+    "OpportunityPricingService": {
+      "hash": "2:0cd4880e7b71a286",
+      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+    },
+    "OpportunityLineItemTriggerHandler": {
+      "hash": "2:d0370cf278ff86dc",
+      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+    },
+    "OpportunityForecastService": {
+      "hash": "2:52804398d7679734",
+      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+    },
+    "OpportunityStageGuardService": {
+      "hash": "2:1b6e4e1829d92d43",
+      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+    },
+    "OpportunityDiscountApprovalService": {
+      "hash": "2:7c854edfc7a7e0c3",
+      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+    },
+    "QuoteTriggerHandler": {
+      "hash": "2:aa5dad16eed22d20",
+      "page": "docs/business/quotes/quote-approval-generation-and-sync.md"
+    },
+    "QuoteApprovalService": {
+      "hash": "2:d86c7f932c31e735",
+      "page": "docs/business/quotes/quote-approval-generation-and-sync.md"
+    },
+    "QuoteGenerationService": {
+      "hash": "2:0d13b3786fff3561",
+      "page": "docs/business/quotes/quote-approval-generation-and-sync.md"
+    },
+    "QuoteLineSyncService": {
+      "hash": "2:20b5391e5354a861",
+      "page": "docs/business/quotes/quote-approval-generation-and-sync.md"
+    },
+    "QuotePdfQueueable": {
+      "hash": "2:b06ba372d28db288",
+      "page": "docs/business/quotes/quote-approval-generation-and-sync.md"
+    },
+    "OrderTriggerHandler": {
+      "hash": "2:a41ca19c884e5408",
+      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+    },
+    "OrderActivationService": {
+      "hash": "2:aeab735e0f950ddf",
+      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+    },
+    "OrderFulfillmentService": {
+      "hash": "2:a711d19cd185bd30",
+      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+    },
+    "RevenueRecognitionService": {
+      "hash": "2:698681a9b981eb34",
+      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+    },
+    "CreditCheckCalloutService": {
+      "hash": "2:6139085afae65eaa",
+      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+    },
+    "OrderItemTriggerHandler": {
+      "hash": "2:bbb4696dc746a836",
+      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+    },
+    "MarginCalculationService": {
+      "hash": "2:0716c85bc29f2a08",
+      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+    }
+  },
+  "lastChangelogCommit": "d191644d578c5cec42f702f60f96e3a964aba6ac"
 }

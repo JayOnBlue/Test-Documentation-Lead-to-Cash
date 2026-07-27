@@ -1,13 +1,57 @@
 {
   "versions": [
     {
+      "version": "v4",
+      "hash": "d191644",
+      "when": "2026-07-27T17:46:51+05:30",
+      "author": "JayMalde",
+      "initials": "J",
+      "avatarBg": "#1d4ed8",
+      "latest": true,
+      "summary": "Updated docs workflow",
+      "description": "",
+      "filesChanged": 1,
+      "additions": 20,
+      "deletions": 0,
+      "added": [],
+      "modified": [],
+      "removed": [],
+      "technicalSummary": "No components changed.",
+      "businessSummary": "No business area affected.",
+      "businessFeatures": []
+    },
+    {
+      "version": "v3",
+      "hash": "69bb1be",
+      "when": "2026-07-25T02:12:25+05:30",
+      "author": "JayOnBlue",
+      "initials": "J",
+      "avatarBg": "#2563eb",
+      "latest": false,
+      "summary": "Add score calculation for activated orders",
+      "description": "",
+      "filesChanged": 1,
+      "additions": 1,
+      "deletions": 0,
+      "added": [],
+      "modified": [
+        "AccountHealthScoreService"
+      ],
+      "removed": [],
+      "technicalSummary": "Modified 1 (1 ApexClass).",
+      "businessSummary": "Likely affects: Account Health Score & related.",
+      "businessFeatures": [
+        "Account Health Score & related"
+      ]
+    },
+    {
       "version": "v2",
       "hash": "494dc91",
       "when": "2026-07-25T01:09:30+05:30",
       "author": "JayOnBlue",
       "initials": "J",
       "avatarBg": "#2563eb",
-      "latest": true,
+      "latest": false,
       "summary": "Update AccountHealthScoreService to include new scoring logic",
       "description": "",
       "filesChanged": 1,
