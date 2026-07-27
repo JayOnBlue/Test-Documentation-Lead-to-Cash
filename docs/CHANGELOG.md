@@ -2,6 +2,20 @@
 
 Generated from force-app metadata changes on every push to main. Newest first (each release is prepended).
 
+## v4 — 2026-07-27 — 4e6d44d
+
+**Contributors:** JayOnBlue, github-actions[bot]
+
+**Compare:** [81a1ca8...4e6d44d](https://github.com/JayOnBlue/Test-Documentation-Lead-to-Cash/compare/81a1ca8...4e6d44d)
+
+**Technical summary:** Changed 1 (1 ApexClass).
+
+**Business summary:** No mapped business feature yet (not yet clustered into a Feature).
+
+### Changed
+
+- **ApexClass** `AccountMergeUtility`
+
 ## v3 — 2026-07-27 — d191644
 
 **Contributors:** JayMalde, JayOnBlue, github-actions[bot]
