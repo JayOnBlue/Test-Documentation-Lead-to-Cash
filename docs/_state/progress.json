@@ -6,7 +6,7 @@
     },
     "OrderStatusRestResource": {
       "hash": "2:a85fe1089445eb24",
-      "page": "docs/business/orders/order-status-api.md"
+      "page": "docs/business/orders/order-activation.md"
     },
     "Big_Deal_Alert": {
       "hash": "2:a8816eded1bfe836",
@@ -18,7 +18,7 @@
     },
     "Order_Activation_Confirmation": {
       "hash": "2:a3ae35b145f074df",
-      "page": "docs/business/orders/order-activation-confirmation.md"
+      "page": "docs/business/orders/order-activation.md"
     },
     "Product_Retirement_Notice": {
       "hash": "2:33d902c6e2e648ca",
@@ -34,47 +34,47 @@
     },
     "AccountTriggerHandler": {
       "hash": "2:832c3f9d20accb34",
-      "page": "docs/business/accounts/territory-and-tiering.md"
+      "page": "docs/business/leads/lead-conversion-account-tiering.md"
     },
     "AccountTerritoryService": {
       "hash": "2:927e0fab97e9ae13",
-      "page": "docs/business/accounts/territory-and-tiering.md"
+      "page": "docs/business/leads/lead-conversion-account-tiering.md"
     },
     "AccountTierService": {
       "hash": "2:5da565e4b3279f85",
-      "page": "docs/business/accounts/territory-and-tiering.md"
+      "page": "docs/business/leads/lead-conversion-account-tiering.md"
     },
     "ContactTriggerHandler": {
       "hash": "2:fb01c2f4def70f51",
-      "page": "docs/business/contacts/primary-contact-role-sync.md"
+      "page": "docs/business/contacts/primary-contact-role-automation.md"
     },
     "ContactRoleSyncService": {
       "hash": "2:471f1926eb1778cf",
-      "page": "docs/business/contacts/primary-contact-role-sync.md"
+      "page": "docs/business/contacts/primary-contact-role-automation.md"
     },
     "LeadCaptureRestResource": {
       "hash": "2:6f7dfdbcf9e0f913",
-      "page": "docs/business/leads/lead-capture-and-qualification.md"
+      "page": "docs/business/leads/lead-capture-scoring-assignment.md"
     },
     "LeadDedupeService": {
       "hash": "2:d825466dd80a01fb",
-      "page": "docs/business/leads/lead-capture-and-qualification.md"
+      "page": "docs/business/leads/lead-capture-scoring-assignment.md"
     },
     "LeadScoringService": {
       "hash": "2:5a2457c2c07c32df",
-      "page": "docs/business/leads/lead-capture-and-qualification.md"
+      "page": "docs/business/leads/lead-capture-scoring-assignment.md"
     },
     "LeadAssignmentService": {
       "hash": "2:77af08cdb8e2a230",
-      "page": "docs/business/leads/lead-capture-and-qualification.md"
+      "page": "docs/business/leads/lead-capture-scoring-assignment.md"
     },
     "LeadTriggerHandler": {
       "hash": "2:5c309395462ad9dc",
-      "page": "docs/business/leads/lead-capture-and-qualification.md"
+      "page": "docs/business/leads/lead-capture-scoring-assignment.md"
     },
     "LeadConversionService": {
       "hash": "2:5c10fe3e7292cfbe",
-      "page": "docs/business/leads/lead-capture-and-qualification.md"
+      "page": "docs/business/leads/lead-conversion-account-tiering.md"
     },
     "NightlyPipelineJobsSchedulable": {
       "hash": "2:ba4f2268d73320b6",
@@ -102,80 +102,165 @@
     },
     "PriceRuleEngine": {
       "hash": "2:aa5368d9fd9e107f",
-      "page": "docs/business/pricing/pricing-and-discount-rules-engine.md"
+      "page": "docs/business/pricing/pricing-discounting-margin-rules.md"
     },
     "OpportunityTriggerHandler": {
       "hash": "2:e1379b8d1d9eafc4",
-      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+      "page": "docs/business/opportunities/opportunity-stage-guardrails-forecasting.md"
     },
     "OpportunityPricingService": {
       "hash": "2:0cd4880e7b71a286",
-      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+      "page": "docs/business/opportunities/opportunity-line-item-repricing.md"
     },
     "OpportunityLineItemTriggerHandler": {
       "hash": "2:d0370cf278ff86dc",
-      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+      "page": "docs/business/opportunities/opportunity-line-item-repricing.md"
     },
     "OpportunityForecastService": {
       "hash": "2:52804398d7679734",
-      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+      "page": "docs/business/opportunities/opportunity-stage-guardrails-forecasting.md"
     },
     "OpportunityStageGuardService": {
       "hash": "2:1b6e4e1829d92d43",
-      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+      "page": "docs/business/opportunities/opportunity-stage-guardrails-forecasting.md"
     },
     "OpportunityDiscountApprovalService": {
       "hash": "2:7c854edfc7a7e0c3",
-      "page": "docs/business/opportunities/pricing-forecasting-and-stage-gates.md"
+      "page": "docs/business/pricing/pricing-discounting-margin-rules.md"
     },
     "QuoteTriggerHandler": {
       "hash": "2:aa5dad16eed22d20",
-      "page": "docs/business/quotes/quote-approval-generation-and-sync.md"
+      "page": "docs/business/quotes/quote-lifecycle-generation-approval-sync.md"
     },
     "QuoteApprovalService": {
       "hash": "2:d86c7f932c31e735",
-      "page": "docs/business/quotes/quote-approval-generation-and-sync.md"
+      "page": "docs/business/quotes/quote-lifecycle-generation-approval-sync.md"
     },
     "QuoteGenerationService": {
       "hash": "2:0d13b3786fff3561",
-      "page": "docs/business/quotes/quote-approval-generation-and-sync.md"
+      "page": "docs/business/quotes/quote-lifecycle-generation-approval-sync.md"
     },
     "QuoteLineSyncService": {
       "hash": "2:20b5391e5354a861",
-      "page": "docs/business/quotes/quote-approval-generation-and-sync.md"
+      "page": "docs/business/quotes/quote-lifecycle-generation-approval-sync.md"
     },
     "QuotePdfQueueable": {
       "hash": "2:b06ba372d28db288",
-      "page": "docs/business/quotes/quote-approval-generation-and-sync.md"
+      "page": "docs/business/quotes/quote-lifecycle-generation-approval-sync.md"
     },
     "OrderTriggerHandler": {
       "hash": "2:a41ca19c884e5408",
-      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+      "page": "docs/business/orders/order-activation-fulfillment-revenue.md"
     },
     "OrderActivationService": {
       "hash": "2:aeab735e0f950ddf",
-      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+      "page": "docs/business/orders/order-activation-fulfillment-revenue.md"
     },
     "OrderFulfillmentService": {
       "hash": "2:a711d19cd185bd30",
-      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+      "page": "docs/business/orders/order-activation-fulfillment-revenue.md"
     },
     "RevenueRecognitionService": {
       "hash": "2:698681a9b981eb34",
-      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+      "page": "docs/business/orders/order-activation-fulfillment-revenue.md"
     },
     "CreditCheckCalloutService": {
       "hash": "2:6139085afae65eaa",
-      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+      "page": "docs/business/orders/order-activation-fulfillment-revenue.md"
     },
     "OrderItemTriggerHandler": {
       "hash": "2:bbb4696dc746a836",
-      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+      "page": "docs/business/orders/order-activation-fulfillment-revenue.md"
     },
     "MarginCalculationService": {
       "hash": "2:0716c85bc29f2a08",
-      "page": "docs/business/orders/order-activation-fulfillment-and-revenue-recognition.md"
+      "page": "docs/business/pricing/pricing-discounting-margin-rules.md"
+    },
+    "SalesOpsAuditService": {
+      "hash": "2:819d9992484aa700",
+      "page": "docs/business/pricing/pricing-discounting-margin-rules.md"
+    },
+    "OrderTrigger": {
+      "hash": "2:4772f5b3eb11a9aa",
+      "page": "docs/business/orders/order-lifecycle-automation.md"
+    },
+    "OrderItemTrigger": {
+      "hash": "2:7628cd5f36b5a649",
+      "page": "docs/business/orders/order-lifecycle-automation.md"
+    },
+    "TaxCalculationCalloutService": {
+      "hash": "2:8293f744a6eea462",
+      "page": "docs/business/orders/order-lifecycle-automation.md"
+    },
+    "OpportunityCloneService": {
+      "hash": "2:8674673c769b6cb3",
+      "page": "docs/business/orders/order-renewal-automation.md"
+    },
+    "OrderRenewalSchedulable": {
+      "hash": "2:9d510a2f44418372",
+      "page": "docs/business/orders/order-renewal-automation.md"
+    },
+    "orderTracker": {
+      "hash": "2:missing",
+      "page": "docs/business/orders/order-tracker.md"
+    },
+    "ProductTrigger": {
+      "hash": "2:c5ff5db30f87f73e",
+      "page": "docs/business/products/product-catalog-maintenance.md"
+    },
+    "ProductTriggerHandler": {
+      "hash": "2:7fb3274f1c46175c",
+      "page": "docs/business/products/product-catalog-maintenance.md"
+    },
+    "PricebookSyncService": {
+      "hash": "2:53f34f23e6b03776",
+      "page": "docs/business/products/product-catalog-maintenance.md"
+    },
+    "ProductCatalogService": {
+      "hash": "2:c603cf4c1f0521a7",
+      "page": "docs/business/products/product-catalog-maintenance.md"
+    },
+    "AccountTrigger": {
+      "hash": "2:4da5e728aa8aecf7",
+      "page": "docs/business/accounts/account-contact-management.md"
+    },
+    "ContactTrigger": {
+      "hash": "2:c0542e6e2e762c75",
+      "page": "docs/business/accounts/account-contact-management.md"
+    },
+    "LeadTrigger": {
+      "hash": "2:4c391dffb1a37b49",
+      "page": "docs/business/leads/lead-capture-automation.md"
+    },
+    "leadScorecard": {
+      "hash": "2:missing",
+      "page": "docs/business/leads/lead-scorecard.md"
+    },
+    "OpportunityTrigger": {
+      "hash": "2:cf9397b59298b2ab",
+      "page": "docs/business/opportunities/opportunity-line-item-automation.md"
+    },
+    "OpportunityLineItemTrigger": {
+      "hash": "2:cc2efe39b44098b5",
+      "page": "docs/business/opportunities/opportunity-line-item-automation.md"
+    },
+    "pipelineDashboard": {
+      "hash": "2:missing",
+      "page": "docs/business/opportunities/sales-pipeline-dashboard.md"
+    },
+    "SalesMetricsService": {
+      "hash": "2:bac09fc84089c210",
+      "page": "docs/business/opportunities/sales-pipeline-dashboard.md"
+    },
+    "QuoteTrigger": {
+      "hash": "2:d86061c19ad007e7",
+      "page": "docs/business/quotes/quote-automation.md"
+    },
+    "quoteBuilder": {
+      "hash": "2:missing",
+      "page": "docs/business/quotes/quote-builder.md"
     }
   },
-  "lastChangelogCommit": "d191644d578c5cec42f702f60f96e3a964aba6ac"
+  "lastChangelogCommit": "81a1ca8b768229c53e951696ff64e35f02d193c8",
+  "lastAuthoredCommit": "81a1ca8b768229c53e951696ff64e35f02d193c8"
 }
