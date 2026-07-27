@@ -12,6 +12,7 @@ public with sharing class AccountMergeUtility {
             for (Opportunity o : orphans) o.AccountId = master.Id;
             update orphans;
             merge master dupes[i];
+
         }
         return master.Id;
     }
