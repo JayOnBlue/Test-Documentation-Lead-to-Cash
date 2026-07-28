@@ -1,1 +1,445 @@
-[]
+[
+  {
+    "id": "account-health-score-execute-anonymous",
+    "alt": "Developer Console Execute Anonymous window with a call to AccountHealthScoreService.healthForAccount",
+    "step": "Open the Developer Console, open Execute Anonymous, and enter a call to healthForAccount",
+    "url_pattern": "/_ui/common/apex/debug/ApexCSIPage",
+    "actions": [],
+    "source": "accounts/account-health-score.md"
+  },
+  {
+    "id": "lead-conversion-account-tiering-convert-button",
+    "alt": "Lead record page with the Convert button highlighted",
+    "step": "Open a Lead record and locate the Convert button",
+    "url_pattern": "/lightning/r/Lead/{recordId}/view",
+    "actions": [],
+    "source": "accounts/lead-conversion-account-tiering.md"
+  },
+  {
+    "id": "lead-conversion-account-tiering-account-fields",
+    "alt": "Account record page showing the Rating field and the Description field with a Territory prefix",
+    "step": "Open a converted Account and view the Rating and Description fields",
+    "url_pattern": "/lightning/r/Account/{recordId}/view",
+    "actions": [],
+    "source": "accounts/lead-conversion-account-tiering.md"
+  },
+  {
+    "id": "nightly-pipeline-maintenance-jobs-scheduled-jobs",
+    "alt": "Setup's Scheduled Jobs page showing the nightly pipeline job entry",
+    "step": "Navigate to Setup and open the Scheduled Jobs page",
+    "url_pattern": "/lightning/setup/ScheduledJobs/home",
+    "actions": [],
+    "source": "automation/nightly-pipeline-maintenance-jobs.md"
+  },
+  {
+    "id": "nightly-pipeline-maintenance-jobs-activity-tasks",
+    "alt": "A Lead record's Activity related list showing a \"Nurture follow-up\" Task created overnight",
+    "step": "Open a Lead record and view the Activity related list",
+    "url_pattern": "/lightning/r/Lead/{recordId}/view",
+    "actions": [],
+    "source": "automation/nightly-pipeline-maintenance-jobs.md"
+  },
+  {
+    "id": "contact-role-sync-new-contact",
+    "alt": "New Contact form open from an Account record with the Account field pre-filled",
+    "step": "Click New on the Contacts related list of an Account and open the new-contact form",
+    "url_pattern": "/lightning/o/Contact/new",
+    "actions": [
+      {
+        "open_record": "Account"
+      },
+      {
+        "click_tab": "Related"
+      }
+    ],
+    "source": "contacts/contact-role-sync.md"
+  },
+  {
+    "id": "contact-role-sync-opportunity-contact-roles",
+    "alt": "Opportunity Contact Roles related list showing a Decision Maker marked as Primary",
+    "step": "Open an Opportunity and view its Contact Roles related list",
+    "url_pattern": "/lightning/r/Opportunity/{recordId}/view",
+    "actions": [
+      {
+        "open_record": "Opportunity"
+      }
+    ],
+    "source": "contacts/contact-role-sync.md"
+  },
+  {
+    "id": "sales-pipeline-dashboard-app-builder",
+    "alt": "Lightning App Builder with the Pipeline Dashboard component dragged onto a Home page",
+    "step": "Open Lightning App Builder for a Home page and drag the Pipeline Dashboard component onto the canvas",
+    "url_pattern": "/lightning/app/AppLauncher",
+    "actions": [
+      {
+        "goto": "/lightning/setup/FlexiPageList/home"
+      }
+    ],
+    "source": "dashboards/sales-pipeline-dashboard.md"
+  },
+  {
+    "id": "sales-pipeline-dashboard-card",
+    "alt": "Pipeline by Stage card showing a list of sales stages with the total open Amount for each",
+    "step": "Open the page where the Pipeline Dashboard component is placed",
+    "url_pattern": "/lightning/page/home",
+    "actions": [],
+    "source": "dashboards/sales-pipeline-dashboard.md"
+  },
+  {
+    "id": "top-open-deals-widget-execute-anonymous",
+    "alt": "Developer Console Execute Anonymous window with a script calling SalesMetricsService.topOpenDeals()",
+    "step": "Open Developer Console, open the Execute Anonymous window, and run a script calling topOpenDeals()",
+    "url_pattern": "/lightning/setup/DeveloperConsole",
+    "actions": [],
+    "source": "dashboards/top-open-deals-widget.md"
+  },
+  {
+    "id": "lead-capture-scoring-new-lead-form",
+    "alt": "New Lead form with Company, Last Name, Industry, and Email fields filled in",
+    "step": "Open the New Lead form and fill in firmographic fields",
+    "url_pattern": "/lightning/o/Lead/new",
+    "actions": [
+      "open_app_launcher",
+      {
+        "search_app_launcher": "Leads"
+      },
+      {
+        "click_app_launcher_result": "Leads"
+      },
+      "click_new",
+      {
+        "fill_field": {
+          "field": "LastName",
+          "value": "Prospect"
+        }
+      },
+      {
+        "fill_field": {
+          "field": "Company",
+          "value": "Acme Robotics"
+        }
+      }
+    ],
+    "source": "leads/lead-capture-scoring-assignment.md"
+  },
+  {
+    "id": "lead-capture-scoring-hot-leads-card",
+    "alt": "Hot Leads lightning card listing the most recent Hot-rated leads with name, company, and source",
+    "step": "View the Hot Leads card on a Lightning page",
+    "url_pattern": "/lightning/page/home",
+    "actions": [],
+    "source": "leads/lead-capture-scoring-assignment.md"
+  },
+  {
+    "id": "lead-followup-reminder-rating-field",
+    "alt": "Lead creation form with the Rating field set to Hot",
+    "step": "Open the New Lead form and set the Rating field to Hot",
+    "url_pattern": "/lightning/o/Lead/new",
+    "actions": [
+      "open_app_launcher",
+      {
+        "search_app_launcher": "Leads"
+      },
+      {
+        "click_app_launcher_result": "Leads"
+      },
+      "click_new",
+      {
+        "fill_field": {
+          "field": "Rating",
+          "value": "Hot"
+        }
+      }
+    ],
+    "source": "leads/lead-followup-reminder.md"
+  },
+  {
+    "id": "lead-scorecard-app-builder",
+    "alt": "Lightning App Builder with the Lead Scorecard component dragged onto a Home page layout",
+    "step": "Open Lightning App Builder for a Home page and drag the Lead Scorecard component onto the layout",
+    "url_pattern": "/lightning/setup/FlexiPageList/home",
+    "actions": [],
+    "source": "leads/lead-scorecard.md"
+  },
+  {
+    "id": "lead-scorecard-home-page",
+    "alt": "Home page showing the Hot Leads card with a list of lead name, company, and lead source",
+    "step": "Open the Home page that has the Lead Scorecard component and view the Hot Leads card",
+    "url_pattern": "/lightning/page/home",
+    "actions": [],
+    "source": "leads/lead-scorecard.md"
+  },
+  {
+    "id": "big-deal-alert-amount-field",
+    "alt": "Opportunity edit form with the Amount field set to a value of 250,000 or more",
+    "step": "Open an Opportunity, click Edit, and set Amount to 250000 or higher",
+    "url_pattern": "/lightning/r/Opportunity/{recordId}/view",
+    "actions": [
+      {
+        "open_record": "Opportunity"
+      },
+      {
+        "click_button": "Edit"
+      },
+      {
+        "fill_field": {
+          "field": "Amount",
+          "value": "250000"
+        }
+      },
+      {
+        "click_button": "Save"
+      }
+    ],
+    "source": "opportunities/big-deal-alert.md"
+  },
+  {
+    "id": "opportunity-pricing-add-product",
+    "alt": "Opportunity Products related list with the Add Product button visible",
+    "step": "Open an Opportunity and view the Products related list",
+    "url_pattern": "/lightning/r/Opportunity/{recordId}/view",
+    "actions": [],
+    "source": "opportunities/opportunity-pricing-approval-automation.md"
+  },
+  {
+    "id": "opportunity-pricing-stage-path",
+    "alt": "Opportunity stage path showing the current stage and next stage option",
+    "step": "Open an Opportunity and view the stage path at the top of the record",
+    "url_pattern": "/lightning/r/Opportunity/{recordId}/view",
+    "actions": [],
+    "source": "opportunities/opportunity-pricing-approval-automation.md"
+  },
+  {
+    "id": "opportunity-renewal-automation-apex-classes",
+    "alt": "Apex Classes setup page showing OrderRenewalSchedulable in the list",
+    "step": "Search for and open Apex Classes in Setup, showing OrderRenewalSchedulable",
+    "url_pattern": "/lightning/setup/ApexClasses/home",
+    "actions": [],
+    "source": "orders/opportunity-renewal-automation.md"
+  },
+  {
+    "id": "opportunity-renewal-automation-scheduled-jobs",
+    "alt": "Scheduled Jobs setup page showing any job scheduled against OrderRenewalSchedulable",
+    "step": "Search for and open Scheduled Jobs in Setup",
+    "url_pattern": "/lightning/setup/ScheduledJobs/home",
+    "actions": [],
+    "source": "orders/opportunity-renewal-automation.md"
+  },
+  {
+    "id": "order-activation-and-status-apex-class",
+    "alt": "Apex Classes setup page showing OrderStatusRestResource in the list",
+    "step": "Search for and open Apex Classes in Setup, showing OrderStatusRestResource",
+    "url_pattern": "/lightning/setup/ApexClasses/home",
+    "actions": [],
+    "source": "orders/order-activation-and-status.md"
+  },
+  {
+    "id": "order-activation-and-status-flow",
+    "alt": "Flow Builder canvas for the Order Activation Confirmation flow showing its start element",
+    "step": "Open the Order Activation Confirmation flow in Flow Builder",
+    "url_pattern": "/lightning/setup/Flows/home",
+    "actions": [],
+    "source": "orders/order-activation-and-status.md"
+  },
+  {
+    "id": "order-activation-fulfillment-margin-status-edit",
+    "alt": "Order edit panel with the Status field set to Activated",
+    "step": "Open an Order record with at least one product, click Edit, and set Status to Activated",
+    "url_pattern": "/lightning/r/Order/{recordId}/view",
+    "actions": [],
+    "source": "orders/order-activation-fulfillment-margin.md"
+  },
+  {
+    "id": "order-activation-fulfillment-margin-tasks",
+    "alt": "Order Activity related list showing provisioning, delivery-confirmation, and revenue recognition Tasks",
+    "step": "Open the Activity related list on a recently activated Order",
+    "url_pattern": "/lightning/r/Order/{recordId}/view",
+    "actions": [],
+    "source": "orders/order-activation-fulfillment-margin.md"
+  },
+  {
+    "id": "order-activation-fulfillment-margin-tracker",
+    "alt": "Open Orders lightning card listing order number, status, and total amount for Draft and Activated orders",
+    "step": "View the Open Orders component on a Home or App page",
+    "url_pattern": "/lightning/page/home",
+    "actions": [],
+    "source": "orders/order-activation-fulfillment-margin.md"
+  },
+  {
+    "id": "order-tracker-card",
+    "alt": "Open Orders card showing a list of Draft and Activated orders with number, status, and total",
+    "step": "View a page that has the Order Tracker component placed on it",
+    "url_pattern": "/lightning/n/Home",
+    "actions": [],
+    "source": "orders/order-tracker.md"
+  },
+  {
+    "id": "pricing-discount-governance-line-price",
+    "alt": "Opportunity Products related list showing a line item's calculated Sales Price",
+    "step": "Open an Opportunity (or Quote/Order) and view a line item's Sales Price on the Products related list",
+    "url_pattern": "/lightning/r/Opportunity/{recordId}/view",
+    "actions": [],
+    "source": "pricing/pricing-discount-governance.md"
+  },
+  {
+    "id": "pricing-discount-governance-audit-tasks",
+    "alt": "Task list view showing completed Tasks with Subject values starting with AUDIT",
+    "step": "Open the Tasks tab and search for Subject values starting with AUDIT/",
+    "url_pattern": "/lightning/o/Task/list",
+    "actions": [],
+    "source": "pricing/pricing-discount-governance.md"
+  },
+  {
+    "id": "product-catalog-management-app-launcher",
+    "alt": "App Launcher open with \"Products\" typed into the search box",
+    "step": "Open the App Launcher and search for Products",
+    "url_pattern": "/lightning/app/AppLauncher",
+    "actions": [
+      "open_app_launcher",
+      {
+        "search_app_launcher": "Products"
+      }
+    ],
+    "source": "products/product-catalog-management.md"
+  },
+  {
+    "id": "product-catalog-management-record-page",
+    "alt": "Product record page showing the normalized Product Code and Family fields",
+    "step": "Open a saved Product record",
+    "url_pattern": "/lightning/r/Product2/{recordId}/view",
+    "actions": [
+      {
+        "open_record": "Product2"
+      }
+    ],
+    "source": "products/product-catalog-management.md"
+  },
+  {
+    "id": "product-catalog-management-retirement-task",
+    "alt": "Task record showing the auto-generated \"Product on this deal was retired\" follow-up",
+    "step": "Open the Tasks related list on an affected opportunity after deactivating a product tied to it",
+    "url_pattern": "/lightning/r/Opportunity/{recordId}/view",
+    "actions": [],
+    "source": "products/product-catalog-management.md"
+  },
+  {
+    "id": "product-retirement-notice-active-field",
+    "alt": "Product record edit form with the Active checkbox unchecked",
+    "step": "Open an existing Product record and uncheck the Active field",
+    "url_pattern": "/lightning/r/Product2/{recordId}/view",
+    "actions": [
+      "open_app_launcher",
+      {
+        "search_app_launcher": "Products"
+      },
+      {
+        "click_app_launcher_result": "Products"
+      },
+      {
+        "open_record": "Product2"
+      }
+    ],
+    "source": "products/product-retirement-notice.md"
+  },
+  {
+    "id": "quote-builder-list",
+    "alt": "Quotable Opportunities card listing open opportunities with name, stage, and amount",
+    "step": "Open the Home page (or an Opportunity record page) where the Quotable Opportunities component is placed",
+    "url_pattern": "/lightning/page/home",
+    "actions": [],
+    "source": "quotes/quote-builder.md"
+  },
+  {
+    "id": "quote-expiry-alert-status-field",
+    "alt": "Quote edit form with the Status field set to Presented",
+    "step": "Open an existing Quote and set the Status field to Presented",
+    "url_pattern": "/lightning/r/Quote/{recordId}/view",
+    "actions": [
+      "open_app_launcher",
+      {
+        "search_app_launcher": "Quotes"
+      },
+      {
+        "click_app_launcher_result": "Quotes"
+      }
+    ],
+    "source": "quotes/quote-expiry-alert.md"
+  },
+  {
+    "id": "quote-lifecycle-generation-approval-quotable-opportunities",
+    "alt": "Quotable Opportunities component listing open opportunities with products, name, stage, and amount",
+    "step": "Open the Home page (or an Opportunity record page) where the Quotable Opportunities component is placed",
+    "url_pattern": "/lightning/page/home",
+    "actions": [],
+    "source": "quotes/quote-lifecycle-generation-approval.md"
+  },
+  {
+    "id": "quote-lifecycle-generation-approval-quote-record",
+    "alt": "Quote record page showing Status, GrandTotal, and Quote Line Items related list",
+    "step": "Open a Quote record generated from an Opportunity",
+    "url_pattern": "/lightning/r/Quote/{recordId}/view",
+    "actions": [
+      {
+        "open_record": "Quote"
+      }
+    ],
+    "source": "quotes/quote-lifecycle-generation-approval.md"
+  },
+  {
+    "id": "quote-lifecycle-generation-approval-blocked-status",
+    "alt": "Quote edit form showing an error on the Status field after trying to set it to Presented without an approval",
+    "step": "Edit a heavily discounted Quote and set Status to Presented to see the validation error",
+    "url_pattern": "/lightning/r/Quote/{recordId}/view",
+    "actions": [
+      {
+        "open_record": "Quote"
+      },
+      {
+        "click_button": "Edit"
+      },
+      {
+        "fill_field": {
+          "field": "Status",
+          "value": "Presented"
+        }
+      },
+      {
+        "click_button": "Save"
+      }
+    ],
+    "source": "quotes/quote-lifecycle-generation-approval.md"
+  },
+  {
+    "id": "quote-lifecycle-generation-approval-approval-task",
+    "alt": "Task related list on a Quote record showing a completed Discount approval task",
+    "step": "View the Activity related list on the Quote showing the completed Discount approval Task",
+    "url_pattern": "/lightning/r/Quote/{recordId}/view",
+    "actions": [],
+    "source": "quotes/quote-lifecycle-generation-approval.md"
+  },
+  {
+    "id": "quote-lifecycle-generation-approval-generated-task",
+    "alt": "Activity related list on the Quote showing the auto-generated \"Quote document generated\" completed Task",
+    "step": "View the Activity related list on an Accepted Quote to see the generated document Task",
+    "url_pattern": "/lightning/r/Quote/{recordId}/view",
+    "actions": [],
+    "source": "quotes/quote-lifecycle-generation-approval.md"
+  },
+  {
+    "id": "sales-playbook-banner-app-builder",
+    "alt": "Lightning App Builder with the Sales Playbook Banner component dragged onto a page",
+    "step": "Open Lightning App Builder for a page and drag the Sales Playbook Banner component onto it",
+    "url_pattern": "/lightning/setup/FlexiPageList/home",
+    "actions": [],
+    "source": "sales-enablement/sales-playbook-banner.md"
+  },
+  {
+    "id": "sales-playbook-banner-rendered",
+    "alt": "Sales Playbook Banner rendered as an alert banner on a Lightning page reminding users to qualify, price, quote, then order",
+    "step": "View a page where the Sales Playbook Banner has been placed and activated",
+    "url_pattern": "/lightning/n/Home",
+    "actions": [],
+    "source": "sales-enablement/sales-playbook-banner.md"
+  }
+]

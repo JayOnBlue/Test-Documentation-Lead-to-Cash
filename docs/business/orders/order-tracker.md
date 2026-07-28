@@ -79,9 +79,10 @@ flowchart LR
     Cancelled -->|drops off tracker| Cancelled
 ```
 
-- Query logic: the card only ever shows orders with `Status IN ('Draft', 'Activated')`, sorted by `EffectiveDate DESC`, capped at 50 records — older or additional open orders beyond the 50 most recent by effective date are not shown.
+- Query logic: `OrderFulfillmentService.getOpenOrders` only ever returns orders with `Status IN ('Draft', 'Activated')`, sorted by `EffectiveDate DESC`, capped at 50 records — older or additional open orders beyond the 50 most recent by effective date are not shown.
 - The data is read-only and cacheable (`@AuraEnabled(cacheable=true)`); the card does not offer any way to edit an order or change its status.
 - The list refreshes based on the standard Lightning Data Service cache — it does not auto-poll, so a user may need to revisit or refresh the page to see very recent changes.
+- The same `OrderFulfillmentService` also fires the provisioning Tasks when an order is activated — see [Order Lifecycle](order-lifecycle.md) — but the Order Tracker card only reads open orders and never triggers that automation itself.
 
 ## Related Features
 

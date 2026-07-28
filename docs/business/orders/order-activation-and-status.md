@@ -49,7 +49,7 @@ url_pattern: /lightning/setup/ApexClasses/home
 ```
 
 4. In the Quick Find box, search for and select **Flows**.
-5. Click **Order Activation Confirmation** to review the flow's trigger (Order record, after save, when Status = "Activated").
+5. Click **Order Activation Confirmation** to review the flow's trigger (Order record, after an **update** where Status = "Activated" — it does not fire on record creation).
 
 ```screenshot
 id: order-activation-and-status-flow
@@ -102,7 +102,7 @@ flowchart TD
 - `getStatus()` (HTTP GET) looks up the Order by the number in the URL path and returns its `Status`; it does not modify any data.
 - `activate()` (HTTP POST) hard-codes the target status to `Activated` — there is no way to set any other status through this endpoint.
 - Any validation rule or trigger on Order that blocks a status change to `Activated` will surface to the caller as a 409 response with the underlying DML error message.
-- The **Order Activation Confirmation** flow triggers after save whenever an Order's `Status` equals `Activated`, regardless of whether the change came from this API, the standard UI, or any other process. It currently defines no actions, so it does not send notifications, update fields, or perform any other work.
+- The **Order Activation Confirmation** flow triggers after an **update** whenever an Order's `Status` equals `Activated`, regardless of whether the change came from this API, the standard UI, or any other process. It does **not** fire if an Order is inserted with `Status = 'Activated'` already set, since its `recordTriggerType` is `Update` only. It currently defines no actions, so it does not send notifications, update fields, or perform any other work.
 
 ## Related Features
 

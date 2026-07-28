@@ -9,6 +9,7 @@ prerequisites:
   - "Standard access to convert Leads and edit Accounts"
 components:
   - "LeadConversionService"
+  - "AccountTrigger"
   - "AccountTriggerHandler"
   - "AccountTierService"
   - "AccountTerritoryService"
@@ -154,6 +155,9 @@ reflects the address the account was created with.
 
 ## Validations & Business Rules
 
+- Automation: the `AccountTrigger` trigger fires on every Account save (before/after insert, after update)
+  and simply delegates to `AccountTriggerHandler` — all of the tiering and territory logic described above
+  runs automatically with no manual step.
 - Automation: `AccountTriggerHandler.beforeInsert` calls `AccountTerritoryService.stampTerritoryDescription`,
   prepending `Territory: <name>` to Description on every new Account.
 - Automation: `AccountTriggerHandler.afterInsert` calls `AccountTierService.retierAccounts` on every newly
