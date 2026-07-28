@@ -7,6 +7,7 @@ verified: false
 components:
   - "ContactTriggerHandler"
   - "ContactRoleSyncService"
+  - "ContactTrigger"
 prerequisites:
   - "The new Contact record must have its Account field populated — contacts with no account are ignored"
   - "The account must have at least one open (not closed) Opportunity for a role to be created"
@@ -107,7 +108,7 @@ actions:
 
 ## Validations & Business Rules
 
-- Trigger scope: runs only on Contact **insert**, and only considers contacts where `AccountId` is populated.
+- Trigger scope: the `ContactTrigger` fires on Contact **after insert** only (not on update, so re-parenting a contact to a different account does not re-run the sync) and hands the inserted records to `ContactTriggerHandler`, which only considers contacts where `AccountId` is populated.
 - Opportunity scope: only opportunities where `IsClosed = false` are evaluated; closed opportunities are never touched.
 - No-overwrite rule: an opportunity is skipped if it already has any `OpportunityContactRole` with `IsPrimary = true` — the sync never replaces an existing primary role.
 - Contact selection: when an account has multiple contacts, the one with the earliest `CreatedDate` is used as the primary contact, regardless of which contact triggered the sync.

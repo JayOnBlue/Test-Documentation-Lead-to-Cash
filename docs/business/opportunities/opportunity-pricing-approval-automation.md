@@ -18,6 +18,8 @@ components:
   - "OpportunityForecastService"
   - "OpportunityStageGuardService"
   - "OpportunityDiscountApprovalService"
+  - "OpportunityTrigger"
+  - "OpportunityLineItemTrigger"
 deprecated: false
 replacement: ""
 order: 20
@@ -170,6 +172,10 @@ url_pattern: /lightning/r/Opportunity/{recordId}/view
 
 ## Validations & Business Rules
 
+- Entry points: `OpportunityTrigger` fires on Opportunity **before update** and **after update** (not on
+  insert) and delegates to `OpportunityTriggerHandler`; `OpportunityLineItemTrigger` fires on Opportunity
+  Line Item **after insert** and **after update** and delegates to `OpportunityLineItemTriggerHandler`.
+  Both handlers exit immediately if their object's automation is bypassed via `TriggerControl`.
 - Automation (before-update trigger, `OpportunityStageGuardService`):
   - Stage cannot advance more than one step at a time (exception: jumping straight to Closed Won bypasses
     the skip check, but not the Closed Won-specific checks).

@@ -5,6 +5,7 @@ category: "Quotes"
 description: "Generate a Quote from an Opportunity, gate presenting a heavily discounted Quote behind a completed approval Task, and sync accepted quote pricing back to the deal."
 verified: false
 components:
+  - "QuoteTrigger"
   - "QuoteTriggerHandler"
   - "QuoteApprovalService"
   - "QuoteGenerationService"

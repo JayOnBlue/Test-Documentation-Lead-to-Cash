@@ -5,6 +5,7 @@ category: "Leads"
 description: "Captures inbound leads from web/partner forms, deduplicates them, scores and rates them Hot/Warm/Cold, and routes new leads to the right owner."
 verified: false
 components:
+  - "LeadTrigger (ApexTrigger)"
   - "LeadCaptureRestResource (ApexClass)"
   - "LeadDedupeService (ApexClass)"
   - "LeadScoringService (ApexClass)"
@@ -28,7 +29,9 @@ slug: "lead-capture-scoring-assignment"
 
 Every Lead that enters Salesforce — whether typed in by a user, imported, or submitted through the
 external web/partner capture API — is automatically deduplicated, scored, rated, and assigned to an
-owner before a sales rep ever sees it. Scoring rates each Lead 0–100 from firmographic fit (industry,
+owner before a sales rep ever sees it. This all runs from a single `LeadTrigger` on the Lead object,
+which fires on every insert and update and hands off to `LeadTriggerHandler` — there is no separate
+setup step for the trigger itself; it is always active once deployed. Scoring rates each Lead 0–100 from firmographic fit (industry,
 revenue, headcount) and contact quality (business email, valid phone), then buckets it into a
 **Rating** of Hot, Warm, or Cold. Hot and target-industry leads are routed to the most recently
 active rep (the "senior" handler); everything else is spread round-robin across active reps so no
