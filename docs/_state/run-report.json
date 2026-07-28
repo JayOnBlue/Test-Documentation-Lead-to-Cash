@@ -1,45 +1,82 @@
 {
   "meta": {
-    "startedAt": "2026-07-27T18:41:18.865Z",
-    "headSha": "af06f169a6e2794c8b6f3c0f599d8d92908b4fc4",
+    "startedAt": "2026-07-27T18:57:57.749Z",
+    "headSha": "937a61c6e7c8c01da395d4b2d9e9daee8d7f3c1a",
     "baseline": false,
     "model": "sonnet",
     "concurrency": 4,
     "cachedPages": 0,
-    "finishedAt": "2026-07-27T18:41:59.811Z",
-    "wallMs": 40857
+    "reconciled": 65,
+    "finishedAt": "2026-07-27T19:06:28.770Z",
+    "wallMs": 510909
   },
   "totals": {
-    "calls": 2,
-    "ok": 2,
+    "calls": 28,
+    "ok": 28,
     "failed": 0,
     "retried": 0,
-    "input": 12,
-    "output": 2832,
-    "cacheRead": 140835,
-    "cacheWrite": 35890,
-    "costUsd": 0.3001065,
+    "input": 299,
+    "output": 139974,
+    "cacheRead": 4395225,
+    "cacheWrite": 425262,
+    "costUsd": 5.970646499999999,
     "permissionDenials": 0,
-    "serialMs": 39516,
-    "cacheHitRate": 0.7969161126043287
+    "serialMs": 1597975,
+    "cacheHitRate": 0.9117802827805572
   },
   "calls": [
     {
       "kind": "plan",
-      "label": "plan 1/1 (1 components)",
+      "label": "plan 1/3 (8 components)",
       "ok": true,
       "error": null,
-      "durationMs": 5489,
+      "durationMs": 17726,
       "turns": 1,
-      "costUsd": 0.161364,
+      "costUsd": 0.068028,
       "attempts": 1,
       "model": "claude-sonnet-5",
       "permissionDenials": 0,
       "usage": {
         "input": 2,
-        "output": 390,
-        "cacheRead": 0,
-        "cacheWrite": 25918
+        "output": 2141,
+        "cacheRead": 22110,
+        "cacheWrite": 4879
+      }
+    },
+    {
+      "kind": "plan",
+      "label": "plan 3/3 (17 components)",
+      "ok": true,
+      "error": null,
+      "durationMs": 77249,
+      "turns": 1,
+      "costUsd": 0.16748700000000002,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 2,
+        "output": 8234,
+        "cacheRead": 22110,
+        "cacheWrite": 6223
+      }
+    },
+    {
+      "kind": "plan",
+      "label": "plan 2/3 (40 components)",
+      "ok": true,
+      "error": null,
+      "durationMs": 98576,
+      "turns": 1,
+      "costUsd": 0.24285299999999999,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 2,
+        "output": 11560,
+        "cacheRead": 22110,
+        "cacheWrite": 10469
       }
     },
     {
@@ -47,22 +84,455 @@
       "label": "accounts/account-health-score.md",
       "ok": true,
       "error": null,
-      "durationMs": 34027,
+      "durationMs": 32884,
       "turns": 5,
-      "costUsd": 0.1387425,
+      "costUsd": 0.14169089999999998,
       "attempts": 1,
       "model": "claude-sonnet-5",
       "permissionDenials": 0,
       "usage": {
         "input": 10,
-        "output": 2442,
-        "cacheRead": 140835,
-        "cacheWrite": 9972
+        "output": 2582,
+        "cacheRead": 140783,
+        "cacheWrite": 10116
+      }
+    },
+    {
+      "kind": "write",
+      "label": "opportunities/big-deal-alert.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 33862,
+      "turns": 5,
+      "costUsd": 0.1367028,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 2527,
+        "cacheRead": 139606,
+        "cacheWrite": 9481
+      }
+    },
+    {
+      "kind": "write",
+      "label": "orders/order-status-api.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 41955,
+      "turns": 5,
+      "costUsd": 0.1452699,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 2876,
+        "cacheRead": 139433,
+        "cacheWrite": 10045
+      }
+    },
+    {
+      "kind": "write",
+      "label": "products/product-retirement-notice.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 34810,
+      "turns": 6,
+      "costUsd": 0.1534218,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 12,
+        "output": 2378,
+        "cacheRead": 171106,
+        "cacheWrite": 11064
+      }
+    },
+    {
+      "kind": "write",
+      "label": "quotes/quote-expiry-alert.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 33521,
+      "turns": 7,
+      "costUsd": 0.1667592,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 14,
+        "output": 2573,
+        "cacheRead": 201134,
+        "cacheWrite": 11297
+      }
+    },
+    {
+      "kind": "write",
+      "label": "leads/lead-followup-reminder.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 76155,
+      "turns": 9,
+      "costUsd": 0.22234500000000001,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 18,
+        "output": 4765,
+        "cacheRead": 262020,
+        "cacheWrite": 12035
+      }
+    },
+    {
+      "kind": "write",
+      "label": "orders/order-activation-confirmation.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 44582,
+      "turns": 5,
+      "costUsd": 0.17210820000000002,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 3448,
+        "cacheRead": 142254,
+        "cacheWrite": 12947
+      }
+    },
+    {
+      "kind": "write",
+      "label": "sales-enablement/sales-playbook-banner.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 26539,
+      "turns": 6,
+      "costUsd": 0.1158477,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 8,
+        "output": 1901,
+        "cacheRead": 109469,
+        "cacheWrite": 9078
+      }
+    },
+    {
+      "kind": "write",
+      "label": "contacts/opportunity-contact-role-sync.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 52076,
+      "turns": 6,
+      "costUsd": 0.1782621,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 4226,
+        "cacheRead": 141787,
+        "cacheWrite": 12051
+      }
+    },
+    {
+      "kind": "write",
+      "label": "accounts/account-territory-tier-assignment.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 56192,
+      "turns": 11,
+      "costUsd": 0.3348735,
+      "attempts": 1,
+      "model": "claude-sonnet-5, claude-sonnet-4-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 13,
+        "output": 4518,
+        "cacheRead": 114855,
+        "cacheWrite": 38768
+      }
+    },
+    {
+      "kind": "write",
+      "label": "leads/lead-capture-scoring-assignment.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 58559,
+      "turns": 13,
+      "costUsd": 0.24303479999999997,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 5470,
+        "cacheRead": 159176,
+        "cacheWrite": 18867
+      }
+    },
+    {
+      "kind": "write",
+      "label": "opportunities/opportunity-pricing-forecasting-discount-approval.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 56309,
+      "turns": 11,
+      "costUsd": 0.2550186,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 5556,
+        "cacheRead": 161422,
+        "cacheWrite": 20537
+      }
+    },
+    {
+      "kind": "write",
+      "label": "automation/nightly-pipeline-maintenance-jobs.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 47539,
+      "turns": 10,
+      "costUsd": 0.2059299,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 4411,
+        "cacheRead": 153603,
+        "cacheWrite": 15609
+      }
+    },
+    {
+      "kind": "write",
+      "label": "orders/order-activation-fulfillment-revenue.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 72136,
+      "turns": 20,
+      "costUsd": 0.314736,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 16,
+        "output": 6183,
+        "cacheRead": 282830,
+        "cacheWrite": 22849
+      }
+    },
+    {
+      "kind": "write",
+      "label": "pricing/pricing-rules-audit-trail.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 74624,
+      "turns": 10,
+      "costUsd": 0.2847291,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 6881,
+        "cacheRead": 158187,
+        "cacheWrite": 22338
+      }
+    },
+    {
+      "kind": "write",
+      "label": "quotes/quote-approval-generation-sync.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 94173,
+      "turns": 14,
+      "costUsd": 0.34463609999999995,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 16,
+        "output": 8534,
+        "cacheRead": 274227,
+        "cacheWrite": 22385
+      }
+    },
+    {
+      "kind": "write",
+      "label": "accounts/account-automation.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 54441,
+      "turns": 13,
+      "costUsd": 0.24625229999999998,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 18,
+        "output": 4313,
+        "cacheRead": 269971,
+        "cacheWrite": 16752
+      }
+    },
+    {
+      "kind": "write",
+      "label": "contacts/contact-automation.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 52268,
+      "turns": 7,
+      "costUsd": 0.1834605,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 12,
+        "output": 4087,
+        "cacheRead": 169625,
+        "cacheWrite": 11872
+      }
+    },
+    {
+      "kind": "write",
+      "label": "leads/lead-management.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 56532,
+      "turns": 17,
+      "costUsd": 0.23259390000000002,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 12,
+        "output": 5149,
+        "cacheRead": 181403,
+        "cacheWrite": 16817
+      }
+    },
+    {
+      "kind": "write",
+      "label": "opportunities/opportunity-management.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 56658,
+      "turns": 19,
+      "costUsd": 0.27444749999999996,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 18,
+        "output": 5293,
+        "cacheRead": 282775,
+        "cacheWrite": 18361
+      }
+    },
+    {
+      "kind": "write",
+      "label": "opportunities/opportunity-renewal-scheduler.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 45755,
+      "turns": 4,
+      "costUsd": 0.1568682,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 6,
+        "output": 4046,
+        "cacheRead": 81394,
+        "cacheWrite": 11957
+      }
+    },
+    {
+      "kind": "write",
+      "label": "orders/order-tracking.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 32064,
+      "turns": 9,
+      "costUsd": 0.14108099999999998,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 2369,
+        "cacheRead": 141660,
+        "cacheWrite": 10503
+      }
+    },
+    {
+      "kind": "write",
+      "label": "products/product-catalog-and-pricebook-sync.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 55487,
+      "turns": 8,
+      "costUsd": 0.21225,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 10,
+        "output": 4613,
+        "cacheRead": 152550,
+        "cacheWrite": 16210
+      }
+    },
+    {
+      "kind": "write",
+      "label": "quotes/quote-management.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 125904,
+      "turns": 20,
+      "costUsd": 0.382761,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 12,
+        "output": 11547,
+        "cacheRead": 185500,
+        "cacheWrite": 25645
+      }
+    },
+    {
+      "kind": "write",
+      "label": "sales-analytics/sales-pipeline-dashboard.md",
+      "ok": true,
+      "error": null,
+      "durationMs": 89399,
+      "turns": 7,
+      "costUsd": 0.24719850000000004,
+      "attempts": 1,
+      "model": "claude-sonnet-5",
+      "permissionDenials": 0,
+      "usage": {
+        "input": 8,
+        "output": 7793,
+        "cacheRead": 112125,
+        "cacheWrite": 16107
       }
     }
   ],
   "skipped": [],
   "notes": [
-    "1 page(s) written and verified."
+    "65 component(s) re-queued by reconciliation (recorded page missing on disk).",
+    "25 page(s) written and verified."
   ]
 }
