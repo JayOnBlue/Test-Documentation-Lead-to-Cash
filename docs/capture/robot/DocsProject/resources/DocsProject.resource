@@ -36,8 +36,43 @@ ${READY_TIMEOUT}    45s
 # Override per run with: -o vars SETTLE:3s
 ${SETTLE}        2s
 
+# Browser window/viewport for every capture. The ${...} wrapping matters: it makes
+# these real Python integers rather than strings, which is precisely what broke
+# CumulusCI's own Open Test Browser (see Open Docs Browser below).
+&{VIEWPORT}      width=${1680}    height=${1050}
+
 
 *** Keywords ***
+Open Docs Browser
+    [Documentation]    Opens a logged-in browser for the capture suite.
+    ...
+    ...                This replaces CumulusCI's `Open Test Browser`, which cannot work
+    ...                with robotframework-browser 20.x. SalesforcePlaywright.py does:
+    ...
+    ...                  width, height = size.split("x", 1)      # -> strings
+    ...                  self.browser.new_context(viewport={"width": width, ...})
+    ...
+    ...                Playwright now validates that strictly, so the run died with
+    ...                "browser.newContext: viewport.width: expected integer, got
+    ...                string". It fails for ANY size, including CumulusCI's own
+    ...                1280x1024 default, so dropping the size argument does not help —
+    ...                the only fix is to build the context ourselves and pass real
+    ...                integers (see &{VIEWPORT} above).
+    ...
+    ...                Everything else mirrors what Open Test Browser did: resolve the
+    ...                org's auto-login URL from CumulusCI, honour the same ${BROWSER}
+    ...                convention (a "headless" prefix means headless), and wait until
+    ...                Salesforce has finished rendering before any capture runs.
+    ${headless}=       Evaluate    "${BROWSER}".startswith("headless")
+    ${type}=           Evaluate    "${BROWSER}".replace("headless", "", 1) or "chromium"
+    # CumulusCI's convention calls it "chrome"; Playwright's engine is "chromium".
+    ${type}=           Set Variable If    "${type}" == "chrome"    chromium    ${type}
+    ${login_url}=      Login Url
+    New Browser        ${type}    headless=${headless}
+    New Context        viewport=${VIEWPORT}
+    Set Browser Timeout    15 seconds
+    New Page           ${login_url}
+    Wait Until Salesforce Is Ready    ${login_url}
 Set Doc Base Url
     [Documentation]    Remember the org's base URL (origin of the current page) for building record URLs.
     ${url}=          Get Url

@@ -91,6 +91,16 @@ function robotStats() {
       'CumulusCI picks headless purely from the `${BROWSER}` variable — it must start with "headless" ' +
       '(e.g. `headlesschrome`). Check the `${BROWSER}` default in docs_capture.robot.');
   }
+  if (/viewport\.\w+: expected integer, got string|newContext:.*expected integer/i.test(xml)) {
+    diagnoses.push('Playwright rejected the browser context because the viewport was passed as strings. ' +
+      'CumulusCI\'s own `Open Test Browser` does this (it splits "WIDTHxHEIGHT" and forwards the parts ' +
+      'unconverted), so the suite must build the context itself — see `Open Docs Browser` in ' +
+      'DocsProject.resource and the &{VIEWPORT} variable, whose values must be ${int} not plain text.');
+  }
+  if (/Suite setup failed|Parent suite setup failed/i.test(xml) && !diagnoses.length) {
+    diagnoses.push('The suite SETUP failed, so no capture was even attempted — every screenshot is missing ' +
+      'for one shared reason (browser launch, login URL, or org connection), not because of individual selectors.');
+  }
   if (/INVALID_AUTH_HEADER|Expired session/i.test(xml)) {
     diagnoses.push('The org session was rejected. If the token itself is valid, check that the org config ' +
       'handed to CumulusCI has a real access_token (a redacted `sf org display` value causes exactly this).');
