@@ -41,6 +41,11 @@ ${SETTLE}        2s
 # CumulusCI's own Open Test Browser (see Open Docs Browser below).
 &{VIEWPORT}      width=${1680}    height=${1050}
 
+# Proof that we are inside the authenticated Lightning app rather than on a login
+# screen or a Classic page. Any one of these is enough — the app shell, the nav bar,
+# or the standard page container that CumulusCI also looks for.
+${LIGHTNING_SHELL}    css=div.slds-template__container, one-appnav, .oneHeader, .slds-global-header
+
 
 *** Keywords ***
 Open Docs Browser
@@ -67,12 +72,55 @@ Open Docs Browser
     ${type}=           Evaluate    "${BROWSER}".replace("headless", "", 1) or "chromium"
     # CumulusCI's convention calls it "chrome"; Playwright's engine is "chromium".
     ${type}=           Set Variable If    "${type}" == "chrome"    chromium    ${type}
-    ${login_url}=      Login Url
     New Browser        ${type}    headless=${headless}
     New Context        viewport=${VIEWPORT}
-    Set Browser Timeout    15 seconds
-    New Page           ${login_url}
-    Wait Until Salesforce Is Ready    ${login_url}
+    Set Browser Timeout    ${READY_TIMEOUT}
+    Log In Through Frontdoor
+    Wait For Lightning Ready
+
+Log In Through Frontdoor
+    [Documentation]    Authenticates the browser and lands it on Lightning Home.
+    ...
+    ...                Why not CumulusCI's `Wait Until Salesforce Is Ready`: that keyword
+    ...                navigates to frontdoor.jsp and then WAITS for Salesforce to
+    ...                redirect to a URL matching `lightning_base_url + /lightning/`
+    ...                (SalesforcePlaywright.py:164). Where frontdoor actually lands
+    ...                depends on the user's default app and UI setting, so on this org it
+    ...                never matched and the run died after 30s with "Timed out waiting
+    ...                for a lightning page" — with no clue where it had landed.
+    ...
+    ...                Instead we ASK for the landing page: frontdoor accepts a retURL,
+    ...                so authentication and destination happen in one deterministic
+    ...                navigation. Readiness is then judged from the DOM (the Lightning
+    ...                app shell) rather than from a URL pattern.
+    ${info}=           Get Org Info
+    # The frontdoor URL embeds the session id. Robot logs keyword arguments and
+    # navigation targets, and log.html ships in the robot-results artifact, so keep
+    # this one navigation out of the log entirely.
+    ${log_level}=      Set Log Level    NONE
+    ${frontdoor}=      Set Variable
+    ...    ${info}[instance_url]/secur/frontdoor.jsp?sid=${info}[access_token]&retURL=%2Flightning%2Fpage%2Fhome
+    Run Keyword And Ignore Error    New Page    ${frontdoor}
+    Set Log Level      ${log_level}
+
+    # Confirm we are actually inside the Lightning app before anything is captured.
+    # Without this an unauthenticated login page has no spinners either, so the
+    # readiness gate would pass and every screenshot would be of the login screen.
+    ${ok}=             Run Keyword And Return Status
+    ...    Wait For Elements State    ${LIGHTNING_SHELL}    visible    ${READY_TIMEOUT}
+    IF    not ${ok}
+        ${url}=        Get Url
+        ${title}=      Get Title
+        Take Screenshot    fullPage=True
+        # Catenate into ONE string: `Fail` takes (msg, *tags), so continuation lines
+        # passed straight to it would silently become test TAGS instead of message text.
+        ${msg}=        Catenate    SEPARATOR=${SPACE}
+        ...    Frontdoor login did not reach Lightning. Landed on "${title}" at ${url}.
+        ...    If that is a login screen, the pasted access token is not valid for browser
+        ...    login (expired, or the org restricts session reuse) — mint a fresh one.
+        ...    The screenshot above and log.html in the robot-results artifact show the page.
+        Fail           ${msg}
+    END
 Set Doc Base Url
     [Documentation]    Remember the org's base URL (origin of the current page) for building record URLs.
     ${url}=          Get Url

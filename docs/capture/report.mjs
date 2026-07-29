@@ -97,6 +97,17 @@ function robotStats() {
       'unconverted), so the suite must build the context itself — see `Open Docs Browser` in ' +
       'DocsProject.resource and the &{VIEWPORT} variable, whose values must be ${int} not plain text.');
   }
+  if (/Timed out waiting for a lightning page/i.test(xml)) {
+    diagnoses.push('CumulusCI waited for Salesforce to redirect frontdoor.jsp to a `/lightning/` URL and it ' +
+      'never did — where frontdoor lands depends on the user\'s default app and UI setting. The suite now ' +
+      'requests the destination explicitly (`frontdoor.jsp?...&retURL=/lightning/page/home`) and judges ' +
+      'readiness from the Lightning app shell in the DOM. If you still see this, the org config is stale.');
+  }
+  if (/Frontdoor login did not reach Lightning/i.test(xml)) {
+    diagnoses.push('The browser authenticated but did not land inside Lightning — the failure message names the ' +
+      'page title and URL it reached. A login screen there means the pasted access token is not usable for ' +
+      'browser login (expired, or the org restricts session reuse): mint a fresh one and re-dispatch.');
+  }
   if (/Suite setup failed|Parent suite setup failed/i.test(xml) && !diagnoses.length) {
     diagnoses.push('The suite SETUP failed, so no capture was even attempted — every screenshot is missing ' +
       'for one shared reason (browser launch, login URL, or org connection), not because of individual selectors.');
