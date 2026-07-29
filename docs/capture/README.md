@@ -56,21 +56,24 @@ rfbrowser init
 
 ## Manual run (what the control panel / workflow do under the hood)
 
+All `cci` commands run from the **repository root** — CumulusCI locates its project via
+the repo root's `cumulusci.yml`, so running them from `docs/capture` fails with
+_"Are you in a CumulusCI Project directory?"_.
+
 ```bash
 # Regenerate the manifest from the business docs
-cd docs && node scripts/build-site.js
+node docs/scripts/build-site.js
 
 # Connect an already-authenticated sf CLI org to CumulusCI (no new login, no MFA)
-cd capture
 cci org import <sf alias/username> ci
 
 # Capture (skips already-captured ids; add -o vars FORCE:True to redo everything)
 cci task run capture_docs --org ci
 ```
 
-Images are written to `../images/<screenshot-id>.png`; rebuild the site to see them inline.
+Images are written to `docs/images/<screenshot-id>.png`; rebuild the site to see them inline.
 Robot's own logs/report (the first place to look when a capture fails) land in
-`robot/DocsProject/results/`.
+`docs/capture/robot/DocsProject/results/`.
 
 ## Deploy the demo metadata (once per org)
 

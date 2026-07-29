@@ -16,15 +16,25 @@
 # operator at trigger time as a workflow_dispatch input and lives only for the
 # duration of the run. The only thing this workflow ever commits is docs/images/.
 #
-# >>> KNOWN & ACCEPTED CAVEAT — READ BEFORE USE <<<
+# >>> SECURITY CAVEAT — THE ORIGINAL ASSUMPTION HERE IS NO LONGER TRUE <<<
 # workflow_dispatch inputs (including `access_token`) are recorded in the run
-# history and are visible to anyone with repository read access. This is
-# ACCEPTABLE here because (a) the repository is private / single-maintainer, so
-# the run-history audience is the same person who minted the token, and (b) the
-# token is short-lived — it dies at the Salesforce session timeout (~2h) and is
-# additionally revoked at the end of every run (see the `always()` logout step).
-# Do NOT try to "fix" this by moving the token into GitHub Secrets — a pasted,
-# ephemeral, self-revoking credential is the entire point of this design.
+# history in CLEARTEXT. This was documented as acceptable because "the repository
+# is private / single-maintainer" — but THIS REPOSITORY IS PUBLIC, so every run's
+# log is world-readable and the pasted token is exposed to anyone, not just the
+# person who minted it. `::add-mask::` cannot prevent this: the runner prints a
+# step's script body and its `env:` values before the step executes, so the token
+# is already on screen by the time the mask is registered.
+#
+# What still limits the damage: the token is short-lived (~2h Salesforce session
+# timeout) and the `always()` logout step revokes it at the end of every run.
+#
+# To close it properly, pick ONE:
+#   (a) store the token as a repo Secret (secrets are masked everywhere and never
+#       printed) and read it via `secrets.SF_ACCESS_TOKEN` — this gives up the
+#       "paste it at dispatch time" ergonomics that motivated the original design;
+#   (b) make the repository private, which restores the original assumption; or
+#   (c) knowingly accept public exposure of a 2-hour, self-revoking credential.
+# Until one is chosen, treat every token pasted into this workflow as burned.
 # =============================================================================
 
 name: SF Screenshots
@@ -116,7 +126,11 @@ jobs:
           SF_ACCESS_TOKEN: ${{ inputs.access_token }}
           SF_INSTANCE_URL: ${{ inputs.instance_url }}
         run: |
-          echo "::add-mask::${{ inputs.access_token }}"
+          # Mask via the ENV VAR, never `${{ inputs.access_token }}`. The runner echoes
+          # each step's script body before executing it, so interpolating the token here
+          # printed it in cleartext — see the 2026-07-28 run, where the very line meant
+          # to protect the token was the line that exposed it.
+          echo "::add-mask::$SF_ACCESS_TOKEN"
           sf org login access-token \
             --no-prompt \
             --instance-url "$SF_INSTANCE_URL" \
@@ -138,12 +152,15 @@ jobs:
           npm ci
           node scripts/build-site.js
 
+      # NOTE: run from the repository ROOT, not docs/capture. CumulusCI finds its
+      # project by walking up to the git repo root for cumulusci.yml — the working
+      # directory is irrelevant. Pointing these steps at docs/capture is what made
+      # the first real run fail with "The file cumulusci.yml was not found in the
+      # repo root ... Are you in a CumulusCI Project directory?".
       - name: Import org into CumulusCI keychain
-        working-directory: docs/capture
         run: cci org import screenshotOrg ci
 
       - name: Capture screenshots
-        working-directory: docs/capture
         env:
           RECAPTURE: ${{ inputs.recapture }}
         run: |

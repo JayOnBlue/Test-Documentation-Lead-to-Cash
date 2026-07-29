@@ -201,13 +201,18 @@ const server = http.createServer(async (req, res) => {
       emit('Regenerating the screenshot manifest from docs/business/**/*.md...');
       await runStreamed('node', ['docs/scripts/build-site.js'], { cwd: PROJECT_ROOT, onLog: emit });
 
+      // cci runs from PROJECT_ROOT, not __dirname: CumulusCI resolves its project
+      // from the git repo root's cumulusci.yml regardless of the working directory,
+      // so running it from docs/capture just fails with "not a CumulusCI Project
+      // directory". The task's suite/output paths in cumulusci.yml are repo-root
+      // relative to match.
       emit(`\nImporting org "${org}" into CumulusCI's keychain as "ci"...`);
-      await runStreamed('cci', ['org', 'import', org, 'ci'], { cwd: __dirname, onLog: emit });
+      await runStreamed('cci', ['org', 'import', org, 'ci'], { cwd: PROJECT_ROOT, onLog: emit });
 
       emit('\nRunning the capture suite...');
       const taskArgs = ['task', 'run', 'capture_docs', '--org', 'ci'];
       if (force) taskArgs.push('-o', 'vars', 'FORCE:True');
-      await runStreamed('cci', taskArgs, { cwd: __dirname, onLog: emit });
+      await runStreamed('cci', taskArgs, { cwd: PROJECT_ROOT, onLog: emit });
 
       if (rebuild) {
         emit('\nRebuilding the doc site with the new screenshots...');

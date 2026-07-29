@@ -1,0 +1,39 @@
+# CumulusCI project file — MUST live at the git repository root.
+#
+# This file used to sit in docs/capture/, with every caller doing `cd docs/capture`
+# first. That cannot work: CumulusCI locates its project by walking up to the GIT
+# REPOSITORY ROOT and looking for cumulusci.yml there, so the working directory is
+# irrelevant. The capture workflow failed on its first real run with:
+#
+#   Error: The file cumulusci.yml was not found in the repo root:
+#   /home/runner/work/Test-Documentation-Lead-to-Cash/Test-Documentation-Lead-to-Cash.
+#   Are you in a CumulusCI Project directory?
+#
+# So it lives here, and the paths below are relative to this directory. Run
+# `cci` commands from the repository root (the workflow, docs/capture/server.mjs
+# and docs/capture/README.md all do).
+#
+# Everything the capture harness itself owns still lives under docs/capture/ —
+# only this project descriptor has to be at the root.
+minimum_cumulusci_version: "3.90.0"
+project:
+    name: DocsProject
+    package:
+        name: Project Docs
+        api_version: "60.0"
+    git:
+        default_branch: main
+
+tasks:
+    capture_docs:
+        description: >
+            Capture documentation screenshots against the target org. Already-captured
+            screenshots are skipped by default; pass "-o vars FORCE:True" to recapture
+            everything, e.g. cci task run capture_docs --org ci -o vars FORCE:True
+        class_path: cumulusci.tasks.robotframework.Robot
+        options:
+            suites: docs/capture/robot/DocsProject/tests/docs_capture.robot
+            vars:
+                - FORCE:False
+            options:
+                outputdir: docs/capture/robot/DocsProject/results
