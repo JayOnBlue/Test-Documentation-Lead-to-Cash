@@ -103,10 +103,16 @@ function robotStats() {
       'requests the destination explicitly (`frontdoor.jsp?...&retURL=/lightning/page/home`) and judges ' +
       'readiness from the Lightning app shell in the DOM. If you still see this, the org config is stale.');
   }
-  if (/Frontdoor login did not reach Lightning/i.test(xml)) {
-    diagnoses.push('The browser authenticated but did not land inside Lightning — the failure message names the ' +
-      'page title and URL it reached. A login screen there means the pasted access token is not usable for ' +
-      'browser login (expired, or the org restricts session reuse): mint a fresh one and re-dispatch.');
+  if (/strict mode violation/i.test(xml)) {
+    diagnoses.push('A selector matched MORE THAN ONE element and Playwright runs in strict mode, which rejects ' +
+      'that instead of picking the first. The error text lists every element it matched. Fix the selector in ' +
+      'DocsProject.resource by appending `>> nth=0` (as the other capture keywords do), or count with ' +
+      '`Get Element Count`, which is not a strict operation. This is not an org or data problem.');
+  }
+  if (/Frontdoor login (did not reach|never reached)/i.test(xml)) {
+    diagnoses.push('The browser did not land on a `/lightning/` path — the failure message names the page title ' +
+      'and URL it reached. A login screen there means the pasted access token is not usable for browser login ' +
+      '(expired, or the org restricts session reuse): mint a fresh one and re-dispatch.');
   }
   if (/Suite setup failed|Parent suite setup failed/i.test(xml) && !diagnoses.length) {
     diagnoses.push('The suite SETUP failed, so no capture was even attempted — every screenshot is missing ' +

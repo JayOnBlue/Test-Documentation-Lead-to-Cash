@@ -103,11 +103,20 @@ Log In Through Frontdoor
     Run Keyword And Ignore Error    New Page    ${frontdoor}
     Set Log Level      ${log_level}
 
-    # Confirm we are actually inside the Lightning app before anything is captured.
-    # Without this an unauthenticated login page has no spinners either, so the
-    # readiness gate would pass and every screenshot would be of the login screen.
+    # Confirm we are inside the Lightning app before anything is captured. Without this
+    # an unauthenticated login page has no spinners either, so the readiness gate would
+    # pass and every screenshot would be of the login screen.
+    #
+    # Judged from the URL PATH, not from a CSS selector. Salesforce serves /lightning/*
+    # only to an authenticated session — anything else is redirected to a login page — so
+    # the path is itself proof of login. The previous version waited for a
+    # comma-separated "any one of these shell elements" selector, which resolves to
+    # SEVERAL elements; Browser drives Playwright in strict mode and rejects a multi-match
+    # selector outright, so it failed on a page that had logged in perfectly well
+    # ("Home | Salesforce" at /lightning/page/home). Element counting below is immune to
+    # that, because counting is not a strict operation.
     ${ok}=             Run Keyword And Return Status
-    ...    Wait For Elements State    ${LIGHTNING_SHELL}    visible    ${READY_TIMEOUT}
+    ...    Wait Until Keyword Succeeds    ${READY_TIMEOUT}    1s    Current Page Is Lightning
     IF    not ${ok}
         ${url}=        Get Url
         ${title}=      Get Title
@@ -115,11 +124,34 @@ Log In Through Frontdoor
         # Catenate into ONE string: `Fail` takes (msg, *tags), so continuation lines
         # passed straight to it would silently become test TAGS instead of message text.
         ${msg}=        Catenate    SEPARATOR=${SPACE}
-        ...    Frontdoor login did not reach Lightning. Landed on "${title}" at ${url}.
-        ...    If that is a login screen, the pasted access token is not valid for browser
-        ...    login (expired, or the org restricts session reuse) — mint a fresh one.
+        ...    Frontdoor login never reached a /lightning/ page. Landed on "${title}" at ${url}.
+        ...    That is normally the login screen, meaning the pasted access token is not valid
+        ...    for browser login (expired, or the org restricts session reuse) — mint a fresh one.
         ...    The screenshot above and log.html in the robot-results artifact show the page.
         Fail           ${msg}
+    END
+    Log Lightning Shell Presence
+
+Current Page Is Lightning
+    [Documentation]    Passes only once the browser has settled on a Lightning Experience
+    ...                path. Compares the URL PATH rather than the whole URL on purpose: a
+    ...                login redirect carries the intended destination in a query string
+    ...                (`?ec=302&startURL=/lightning/page/home`), so a substring test
+    ...                against the full URL would happily accept the login page itself.
+    ${url}=            Get Url
+    ${path}=           Evaluate    __import__('urllib.parse').parse.urlsplit($url).path
+    Should Start With    ${path}    /lightning/    Not on a Lightning path yet (url=${url})
+
+Log Lightning Shell Presence
+    [Documentation]    Diagnostic only — never fails the run. Records how many Lightning
+    ...                shell elements are present, so that if captures later fail on
+    ...                selectors the log already says whether the app shell rendered at all.
+    ${n}=              Get Element Count    ${LIGHTNING_SHELL}
+    Log                Lightning shell elements matched: ${n} (${LIGHTNING_SHELL})
+    IF    ${n} == 0
+        Log            Logged in to a Lightning URL, but none of the known shell selectors
+        ...            matched. Captures may need updated selectors for this org's theme.
+        ...            level=WARN
     END
 Set Doc Base Url
     [Documentation]    Remember the org's base URL (origin of the current page) for building record URLs.
