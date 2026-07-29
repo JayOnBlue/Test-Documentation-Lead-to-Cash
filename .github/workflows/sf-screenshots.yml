@@ -122,14 +122,16 @@ jobs:
       # --no-prompt makes the CLI read SF_ACCESS_TOKEN. No set -x, no --verbose.
       # ---------------------------------------------------------------------
       - name: Authenticate to Salesforce
+        id: auth
         env:
           SF_ACCESS_TOKEN: ${{ inputs.access_token }}
           SF_INSTANCE_URL: ${{ inputs.instance_url }}
         run: |
-          # Mask via the ENV VAR, never `${{ inputs.access_token }}`. The runner echoes
-          # each step's script body before executing it, so interpolating the token here
-          # printed it in cleartext — see the 2026-07-28 run, where the very line meant
-          # to protect the token was the line that exposed it.
+          # Mask via the env var below. NEVER write the inputs.access_token expression
+          # anywhere in this script body, INCLUDING IN A COMMENT: the runner echoes the
+          # whole body after expanding expressions, so even a commented-out reference is
+          # printed in cleartext. That is what happened on 2026-07-28 (the login line)
+          # and again on 2026-07-29 (this very comment).
           echo "::add-mask::$SF_ACCESS_TOKEN"
           sf org login access-token \
             --no-prompt \
@@ -140,6 +142,7 @@ jobs:
       # Verify without leaking: jq selects only non-sensitive fields; the raw
       # (token-bearing) JSON is never printed.
       - name: Verify session (redacted)
+        id: verify
         run: |
           sf org display --target-org screenshotOrg --json \
             | jq '{username: .result.username, instanceUrl: .result.instanceUrl, connectedStatus: .result.connectedStatus}'
@@ -147,22 +150,64 @@ jobs:
       # Regenerate the screenshot manifest from the CURRENT business docs so the
       # capture never runs against a stale committed manifest.
       - name: Refresh screenshot manifest
+        id: manifest
         working-directory: docs
         run: |
           npm ci
           node scripts/build-site.js
 
+      # Hand CumulusCI the org directly instead of `cci org import`.
+      #
+      # `cci org import` reads the org out of the Salesforce CLI by parsing
+      # `sf org display --json` and taking .result.accessToken. Modern sf CLI (2.144)
+      # REDACTS that field, returning the literal string
+      #     [REDACTED] Use 'sf org auth show-access-token' to view
+      # CumulusCI then uses that placeholder as the access token AND derives the org
+      # id from it via accessToken.split("!")[0] (sfdx_org_config.py:57). With no "!"
+      # in the placeholder the whole sentence became the org id, which is exactly the
+      # URL in the failing run:
+      #     /sobjects/Organization/%5BREDACTED%5D%20Use%20'sf%20org%20auth%20...
+      # and the bogus Authorization header produced INVALID_AUTH_HEADER.
+      #
+      # CumulusCI's supported CI escape hatch is CUMULUSCI_ORG_<name> holding a JSON
+      # org config, which loads as a plain OrgConfig. We already have the real token
+      # (it was pasted at dispatch), so we never need the CLI to hand it back.
+      # Only non-redacted fields are read from the CLI.
+      - name: Build the CumulusCI org config from the pasted token
+        id: org_config
+        env:
+          SF_ACCESS_TOKEN: ${{ inputs.access_token }}
+        run: |
+          INFO="$(sf org display --target-org screenshotOrg --json)"
+          INSTANCE_URL="$(printf '%s' "$INFO" | jq -r '.result.instanceUrl' | sed 's:/*$::')"
+          USERNAME="$(printf '%s' "$INFO" | jq -r '.result.username')"
+          # Same derivation CumulusCI uses — the org id is the part of a real
+          # access token before the "!".
+          ORG_ID="${SF_ACCESS_TOKEN%%!*}"
+          if [ -z "$ORG_ID" ] || [ "$ORG_ID" = "$SF_ACCESS_TOKEN" ]; then
+            echo "::error::The pasted access token has no '!' separator, so no org id can be derived from it."
+            echo "::error::Mint a fresh one with: sf org display --target-org <alias> --json | jq -r .result.accessToken"
+            exit 1
+          fi
+          echo "Org config: username=$USERNAME instanceUrl=$INSTANCE_URL orgId=$ORG_ID"
+          # Single-line JSON; the token value is already registered with add-mask, so
+          # it stays masked wherever this env var surfaces.
+          echo "CUMULUSCI_ORG_ci=$(jq -cn \
+            --arg t "$SF_ACCESS_TOKEN" --arg u "$INSTANCE_URL" --arg n "$USERNAME" --arg i "$ORG_ID" \
+            '{access_token:$t, instance_url:$u, username:$n, org_id:$i}')" >> "$GITHUB_ENV"
+
       # NOTE: run from the repository ROOT, not docs/capture. CumulusCI finds its
       # project by walking up to the git repo root for cumulusci.yml — the working
-      # directory is irrelevant. Pointing these steps at docs/capture is what made
-      # the first real run fail with "The file cumulusci.yml was not found in the
-      # repo root ... Are you in a CumulusCI Project directory?".
-      - name: Import org into CumulusCI keychain
-        run: cci org import screenshotOrg ci
-
+      # directory is irrelevant. Pointing this step at docs/capture is what made the
+      # 2026-07-28 run fail with "The file cumulusci.yml was not found in the repo
+      # root ... Are you in a CumulusCI Project directory?".
       - name: Capture screenshots
+        id: capture
         env:
           RECAPTURE: ${{ inputs.recapture }}
+          # An access-token login has no refresh token, so CumulusCI's OAuth refresh
+          # cannot work. This makes it use the token as supplied (org_config.py:97).
+          CUMULUSCI_DISABLE_REFRESH: '1'
         run: |
           if [ "$RECAPTURE" = "true" ]; then
             cci task run capture_docs --org ci -o vars FORCE:True
@@ -179,6 +224,7 @@ jobs:
       # The ONLY thing this workflow ever writes back to the repository is
       # docs/images/ — never scripts, never site output, never metadata.
       - name: Commit screenshots
+        id: commit
         run: |
           git config user.name "sf-screenshots-bot"
           git config user.email "sf-screenshots-bot@users.noreply.github.com"
@@ -215,3 +261,19 @@ jobs:
           name: robot-results
           path: docs/capture/robot/DocsProject/results
           if-no-files-found: ignore
+
+      # One short summary on the run page: what succeeded, what failed, what needs a
+      # human's attention. Both prior failures were a single line hidden under a
+      # 2,000-line pip install, which is exactly what this exists to surface.
+      # Runs on always() so a failed capture still gets reported.
+      - name: Report
+        if: always()
+        env:
+          STEP_OUTCOMES: >-
+            {"Authenticate to Salesforce":"${{ steps.auth.outcome }}",
+             "Verify session":"${{ steps.verify.outcome }}",
+             "Refresh screenshot manifest":"${{ steps.manifest.outcome }}",
+             "Build CumulusCI org config":"${{ steps.org_config.outcome }}",
+             "Capture screenshots":"${{ steps.capture.outcome }}",
+             "Commit screenshots":"${{ steps.commit.outcome }}"}
+        run: node docs/capture/report.mjs
