@@ -26,6 +26,19 @@ Suite Teardown   Close Browser
 #   cci task run capture_docs --org ci -o vars FORCE:True
 ${FORCE}         False
 
+# MUST be a "headless..." name on a CI runner. CumulusCI's Open Test Browser has no
+# headless parameter — it decides purely from this variable
+# (SalesforcePlaywright.py: `headless = browser.startswith("headless")`), and
+# SalesforcePlaywright.robot defaults it to plain "chrome", i.e. HEADED. On a GitHub
+# runner there is no display, so Playwright died with "Missing X server or $DISPLAY /
+# Looks like you launched a headed browser without having a XServer running" and every
+# capture failed in suite setup.
+#
+# Defined here (not in the imported resource) because a suite's own Variables table
+# takes precedence over an imported resource file's. To watch the browser locally:
+#   cci task run capture_docs --org ci -o vars BROWSER:chrome
+${BROWSER}       headlesschrome
+
 
 *** Test Cases ***
 Capture Interactive Screenshots

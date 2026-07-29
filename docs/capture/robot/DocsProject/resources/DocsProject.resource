@@ -12,10 +12,17 @@ Documentation    Reusable keywords for capturing documentation screenshots.
 ...                   a ```screenshot block's `actions:` list (see docs/business/TEMPLATE.md),
 ...                   so every interactive capture is driven by the docs themselves instead of
 ...                   hand-written test cases.
-Library          Browser
+# Browser and cumulusci.robotframework.CumulusCI are deliberately NOT imported here.
+# The suite that uses this file imports cumulusci/robotframework/SalesforcePlaywright.robot,
+# which already imports both — Browser with `jsextension=.../cci_init.js` and CumulusCI
+# with `${ORG}`. Re-importing them bare produced two warnings on every run:
+#   "Suite 'Docs Capture' has already imported library 'Browser' with different
+#    arguments. This import is ignored."
+# The imports were ignored anyway (the first one wins, and it is the correct one), so
+# dropping them changes no behavior and removes the noise. Library keywords resolve at
+# the suite level, so this file's keywords still see both libraries.
 Library          String
 Library          Collections
-Library          cumulusci.robotframework.CumulusCI
 Library          ${CURDIR}/DocsCapture.py
 
 

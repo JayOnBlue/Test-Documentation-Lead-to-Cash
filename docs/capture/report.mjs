@@ -43,6 +43,29 @@ function listImages() {
  * well-known attribute set, not general XML processing, and it keeps the capture
  * harness free of another package.
  */
+/**
+ * Robot failure messages often open with a bare header line like
+ * "Parent suite setup failed:" and put the real cause underneath. Taking only the
+ * first line reported exactly that header and threw the diagnosis away, so take the
+ * first couple of lines that actually say something.
+ */
+function firstUsefulLines(text, max = 2) {
+  const lines = String(text)
+    // Numeric character references first: Robot writes Playwright's box-drawing frame
+    // as &#9484;&#9472;… and without decoding them the filter below cannot recognise
+    // the frame, so the "cause" line came out as a row of entity codes.
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&')
+    .split('\n')
+    .map((l) => l.trim())
+    // Drop blank lines, bare "...:" headers, and Playwright's box-drawing frame.
+    .filter((l) => l && !/^[A-Za-z][\w '-]*:$/.test(l) && !/^[│┌└─┐┘|+=-]+$/.test(l))
+    .map((l) => l.replace(/^[│|]\s*/, '').replace(/\s*[│|]$/, '').trim())
+    .filter(Boolean);
+  return lines.slice(0, max).join(' — ').slice(0, 300) || '(no message; see the Robot report artifact)';
+}
+
 function robotStats() {
   let xml;
   try { xml = fs.readFileSync(ROBOT_OUTPUT, 'utf8'); } catch (e) { return null; }
@@ -57,12 +80,28 @@ function robotStats() {
     .map(([, name, body]) => {
       const failed = body.match(/<status\b[^>]*\bstatus="FAIL"[^>]*(?:\/>|>([\s\S]*?)<\/status>)/);
       if (!failed) return null;
-      const message = (failed[1] || '').trim().split('\n')[0].slice(0, 200);
-      return { name, message };
+      return { name, message: firstUsefulLines(failed[1] || '') };
     })
     .filter(Boolean);
-  if (!stat) return { pass: 0, fail: 0, skip: 0, failedTests };
-  return { pass: +stat[1], fail: +stat[2], skip: +(stat[3] || 0), failedTests };
+  // Known root causes worth naming outright, so nobody has to read Playwright's
+  // box-drawing error art to work out what to change.
+  const diagnoses = [];
+  if (/Missing X server|without having a XServer|\$DISPLAY/i.test(xml)) {
+    diagnoses.push('Playwright tried to launch a HEADED browser and the runner has no display. ' +
+      'CumulusCI picks headless purely from the `${BROWSER}` variable — it must start with "headless" ' +
+      '(e.g. `headlesschrome`). Check the `${BROWSER}` default in docs_capture.robot.');
+  }
+  if (/INVALID_AUTH_HEADER|Expired session/i.test(xml)) {
+    diagnoses.push('The org session was rejected. If the token itself is valid, check that the org config ' +
+      'handed to CumulusCI has a real access_token (a redacted `sf org display` value causes exactly this).');
+  }
+  if (/INVALID_SESSION_ID/i.test(xml)) {
+    diagnoses.push('The Salesforce session expired mid-run — mint a fresh access token and re-dispatch.');
+  }
+  const base = stat
+    ? { pass: +stat[1], fail: +stat[2], skip: +(stat[3] || 0) }
+    : { pass: 0, fail: 0, skip: 0 };
+  return { ...base, failedTests, diagnoses };
 }
 
 function parseOutcomes() {
@@ -126,10 +165,17 @@ if (failedSteps.length) {
   out.push('');
 }
 
+if (robot && robot.diagnoses?.length) {
+  out.push('### 🔎 Likely cause');
+  out.push('');
+  for (const d of robot.diagnoses) out.push(`- ${d}`);
+  out.push('');
+}
+
 if (robot && robot.failedTests.length) {
   out.push('### ❌ Failing captures');
   out.push('');
-  for (const t of robot.failedTests) out.push(`- **${t.name}** — ${t.message || 'see the Robot report artifact'}`);
+  for (const t of robot.failedTests) out.push(`- **${t.name}** — ${t.message}`);
   out.push('');
 }
 
