@@ -103,6 +103,14 @@ function robotStats() {
       'requests the destination explicitly (`frontdoor.jsp?...&retURL=/lightning/page/home`) and judges ' +
       'readiness from the Lightning app shell in the DOM. If you still see this, the org config is stale.');
   }
+  if (/got multiple values for argument|expected \d+ argument|No keyword with name/i.test(xml)) {
+    diagnoses.push('This is a KEYWORD SIGNATURE bug in the capture suite itself, not an org, token or ' +
+      'selector problem — Robot could not bind the arguments given to a keyword. Nothing was captured ' +
+      'because suite setup died. Reproduce it in seconds without a real org, and without spending a CI ' +
+      'run, with: `python -m robot --outputdir /tmp/st docs/capture/selftest/login_selftest.robot`. ' +
+      '(A frequent cause: `Log`/`Fail` take (message, level=…) / (message, *tags), so multi-line ' +
+      'continuations become extra POSITIONAL arguments — catenate them into one string first.)');
+  }
   if (/strict mode violation/i.test(xml)) {
     diagnoses.push('A selector matched MORE THAN ONE element and Playwright runs in strict mode, which rejects ' +
       'that instead of picking the first. The error text lists every element it matched. Fix the selector in ' +

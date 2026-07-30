@@ -84,6 +84,33 @@ sf project deploy start --source-dir ../../force-app --target-org <org>
 sf org assign permset --name Order_Management_Docs --target-org <org>
 ```
 
+## Self-test: run this after ANY edit to `DocsProject.resource`
+
+```bash
+python -m robot --outputdir /tmp/selftest docs/capture/selftest/login_selftest.robot
+```
+
+No org, no token, no network — it starts its own mock Salesforce (`selftest/mock_salesforce.py`)
+and drives the suite's real keywords against it: the frontdoor login, the readiness gate, and
+the shell diagnostic, in both their passing and failing branches.
+
+This exists because browser keywords can only be proven by *running* them, and for a while
+running them meant dispatching the workflow against a live org. Three consecutive CI runs were
+lost to bugs this catches in about fifteen seconds:
+
+| Failure in CI | Test that now covers it |
+|---|---|
+| `viewport.width: expected integer, got string` | Viewport Is Passed To Playwright As Integers |
+| `strict mode violation: … resolved to 4 elements` | Shell Selector Counts Without Tripping Strict Mode |
+| `Keyword 'BuiltIn.Log' got multiple values for argument 'level'` | Shell Diagnostic Survives A Zero Count |
+
+It is deliberately outside `robot/DocsProject/`, and `cumulusci.yml` names a single suite file,
+so `cci task run capture_docs` never picks it up.
+
+What it cannot cover: anything needing real Salesforce — live-page selectors, SOQL record
+lookup, org data. Those still only surface in CI, which is why `report.mjs` itemises them per
+screenshot.
+
 ## Adding a new screenshot
 
 Don't edit anything in this folder. Add a ```` ```screenshot ```` block (with `actions:` if the

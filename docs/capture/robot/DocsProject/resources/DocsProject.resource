@@ -77,9 +77,15 @@ Open Docs Browser
     Set Browser Timeout    ${READY_TIMEOUT}
     Log In Through Frontdoor
     Wait For Lightning Ready
+    Log Lightning Shell Presence
 
 Log In Through Frontdoor
+    [Arguments]        ${frontdoor}=${EMPTY}
     [Documentation]    Authenticates the browser and lands it on Lightning Home.
+    ...
+    ...                ${frontdoor} exists so this keyword can be exercised against a local
+    ...                mock server in a test; leave it empty and the real URL is derived from
+    ...                the CumulusCI org, which is what the capture suite does.
     ...
     ...                Why not CumulusCI's `Wait Until Salesforce Is Ready`: that keyword
     ...                navigates to frontdoor.jsp and then WAITS for Salesforce to
@@ -93,13 +99,15 @@ Log In Through Frontdoor
     ...                so authentication and destination happen in one deterministic
     ...                navigation. Readiness is then judged from the DOM (the Lightning
     ...                app shell) rather than from a URL pattern.
-    ${info}=           Get Org Info
     # The frontdoor URL embeds the session id. Robot logs keyword arguments and
     # navigation targets, and log.html ships in the robot-results artifact, so keep
     # this one navigation out of the log entirely.
     ${log_level}=      Set Log Level    NONE
-    ${frontdoor}=      Set Variable
-    ...    ${info}[instance_url]/secur/frontdoor.jsp?sid=${info}[access_token]&retURL=%2Flightning%2Fpage%2Fhome
+    IF    "${frontdoor}" == "${EMPTY}"
+        ${info}=       Get Org Info
+        ${frontdoor}=    Set Variable
+        ...    ${info}[instance_url]/secur/frontdoor.jsp?sid=${info}[access_token]&retURL=%2Flightning%2Fpage%2Fhome
+    END
     Run Keyword And Ignore Error    New Page    ${frontdoor}
     Set Log Level      ${log_level}
 
@@ -146,12 +154,19 @@ Log Lightning Shell Presence
     [Documentation]    Diagnostic only — never fails the run. Records how many Lightning
     ...                shell elements are present, so that if captures later fail on
     ...                selectors the log already says whether the app shell rendered at all.
+    ...
+    ...                Call this only AFTER `Wait For Lightning Ready`: taken any earlier it
+    ...                counts a half-rendered page and warns about nothing.
     ${n}=              Get Element Count    ${LIGHTNING_SHELL}
     Log                Lightning shell elements matched: ${n} (${LIGHTNING_SHELL})
     IF    ${n} == 0
-        Log            Logged in to a Lightning URL, but none of the known shell selectors
-        ...            matched. Captures may need updated selectors for this org's theme.
-        ...            level=WARN
+        # One positional argument, then one named. `Log` is (message, level=INFO, ...), so
+        # two positionals would bind the second to `level` and collide with level=WARN —
+        # "got multiple values for argument 'level'", which failed the 10:19 run.
+        ${warning}=    Catenate    SEPARATOR=${SPACE}
+        ...    Logged in to a Lightning URL, but none of the known shell selectors matched.
+        ...    Captures may need updated selectors for this org's theme.
+        Log            ${warning}    level=WARN
     END
 Set Doc Base Url
     [Documentation]    Remember the org's base URL (origin of the current page) for building record URLs.

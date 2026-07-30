@@ -47,7 +47,13 @@ docs/capture/README.md
 docs/capture/robot/DocsProject/tests/docs_capture.robot
 docs/capture/robot/DocsProject/resources/DocsProject.resource
 docs/capture/robot/DocsProject/resources/DocsCapture.py
+docs/capture/selftest/login_selftest.robot   ← runs the capture keywords with no org needed
+docs/capture/selftest/mock_salesforce.py     ← the mock org it drives
 ```
+
+Copy the two `selftest/` files even though they are not needed at runtime: they are how you
+check a change to the capture suite without spending a workflow run against a live org. See
+`docs/capture/README.md`.
 
 ### Do NOT copy
 
