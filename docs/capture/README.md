@@ -19,8 +19,14 @@ selector, or workflow edit needed.
 Every navigation and action waits for `Wait For Lightning Ready`
 (`robot/DocsProject/resources/DocsProject.resource`): CumulusCI's own loading wait, **then** a poll
 until zero visible spinners *and* zero visible Lightning stencil skeletons (the grey placeholder
-bars), **then** a settle delay. That three-stage gate is what makes captures consistent run to
-run. Tune with `-o vars SETTLE:3s` if your org paints slowly.
+bars), **then** a settle delay. Tune with `-o vars SETTLE:3s` if your org paints slowly.
+
+Readiness is **best effort, not a precondition**. Some Salesforce pages never reach zero visible
+spinners — a chart still fetching, a related list that polls — so after `ARTIFACT_TIMEOUT` (12s)
+the capture proceeds anyway and logs how many artifacts remained. An image with a stray spinner
+is worth much more than no image: treating the gate as mandatory cost one run 21 of its 41
+screenshots. If a captured image really does look half-rendered, raise `-o vars
+ARTIFACT_TIMEOUT:30s` or narrow `${LOADING_ARTIFACTS}`.
 
 ## Two ways to run it
 
@@ -104,6 +110,9 @@ lost to bugs this catches in about fifteen seconds:
 | `strict mode violation: … resolved to 4 elements` | Shell Selector Counts Without Tripping Strict Mode |
 | `Keyword 'BuiltIn.Log' got multiple values for argument 'level'` | Shell Diagnostic Survives A Zero Count |
 | 21 captures produced no image because a spinner never cleared | Readiness Gate Captures Anyway When A Spinner Never Clears |
+| `locator.click: Timeout` — "element is outside of the viewport" | Click Reaches A Button Below The Fold |
+| a click swallowed by a covering element | Click Falls Back To A DOM Click… |
+| 45s burned clicking a "More" menu the app lacks | Missing Tab Fails Fast With A Useful Message |
 
 It is deliberately outside `robot/DocsProject/`, and `cumulusci.yml` names a single suite file,
 so `cci task run capture_docs` never picks it up.

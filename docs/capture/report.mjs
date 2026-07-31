@@ -128,7 +128,9 @@ function robotStats() {
   // Screenshots skipped because the org has no record of the required object. A data gap,
   // not a code or selector problem, so it gets its own section: the fix is creating a
   // record, and no amount of re-running will change the outcome without one.
-  const noRecord = [...xml.matchAll(/Skipping ([\w-]+) [^<]*?no sample record/g)].map((m) => m[1]);
+  const noRecord = [...new Set(
+    [...xml.matchAll(/Skipping ([\w-]+) [^<]*?(?:no sample record|had nothing to act on)/g)].map((m) => m[1]),
+  )];
 
   // Diagnoses must be read from MESSAGES and STATUSES only. Robot also writes every
   // keyword's <arg> values and <doc> text into output.xml — including those of IF branches
@@ -162,7 +164,14 @@ function robotStats() {
       'no longer fatal — `Wait For Lightning Ready` now captures anyway and logs the shortfall. If a captured ' +
       'image genuinely looks half-rendered, raise ${ARTIFACT_TIMEOUT} or narrow ${LOADING_ARTIFACTS}.');
   }
-  if (/got multiple values for argument|expected \d+ argument|No keyword with name/i.test(evidence)) {
+  if (/locator\.click: Timeout|element is outside of the viewport/i.test(evidence)) {
+    diagnoses.push('A click timed out. If the log says "element is outside of the viewport", the button was ' +
+      'present but Playwright would not click it — `Click Doc Element` now scrolls it into view and falls back ' +
+      'to a forced click. If instead the selector never resolved, the button genuinely is not on that page: ' +
+      'check the action verb and its label in the screenshot block that names it.');
+  }
+  const suiteSetupDied = /(?:Parent s|S)uite setup failed/i.test(evidence);
+  if (suiteSetupDied && /got multiple values for argument|expected \d+ argument|No keyword with name/i.test(evidence)) {
     diagnoses.push('This is a KEYWORD SIGNATURE bug in the capture suite itself, not an org, token or ' +
       'selector problem — Robot could not bind the arguments given to a keyword. Nothing was captured ' +
       'because suite setup died. Reproduce it in seconds without a real org, and without spending a CI ' +

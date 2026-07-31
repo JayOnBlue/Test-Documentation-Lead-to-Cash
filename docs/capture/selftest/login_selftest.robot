@@ -12,6 +12,9 @@ Documentation     Executes the capture suite's browser keywords against a local 
 ...                 - viewport passed to Playwright as strings          (2026-07-29)
 ...                 - multi-match selector under strict mode            (2026-07-29)
 ...                 - `Log` given two positional arguments + level=     (2026-07-30)
+...                 - a permanent spinner treated as fatal              (2026-07-30)
+...                 - a click refused as "outside of the viewport"      (2026-07-31)
+...                 - a blind click on a "More" menu that did not exist (2026-07-31)
 ...
 ...               Not covered: anything that needs real Salesforce (selectors on live pages,
 ...               SOQL record lookup). Those still only fail in CI, which is why the run
@@ -119,6 +122,44 @@ Readiness Gate Captures Anyway When A Spinner Never Clears
     Should Be True    ${still_spinning} > 0    the mock page should still be showing a spinner
     Take Screenshot    filename=${OUTPUT DIR}/captured-despite-spinner    fullPage=${False}
     Log To Console    \ncaptured an image with ${still_spinning} spinner(s) still on screen
+
+Click Reaches A Button Below The Fold
+    [Documentation]    Regression test for 2026-07-31: Playwright refused to click a present,
+    ...                visible button because it judged it "outside of the viewport", retrying
+    ...                87 times over 45s and producing no image. Click Doc Element scrolls first.
+    New Context    viewport=${VIEWPORT}
+    New Page       ${BASE}/belowfold
+    Click Doc Element    button:has-text("Edit") >> visible=true >> nth=0
+    ${title}=    Get Title
+    Should Be Equal    ${title}    CLICKED
+    Log To Console    \nclicked a button 3000px below the fold
+
+Click Falls Back To A DOM Click When Something Covers The Button
+    [Documentation]    An overlay intercepts the pointer, so no synthesised mouse event can
+    ...                reach the button — including a force=True one, which this test proved
+    ...                reports success while doing nothing. Only el.click() actually fires the
+    ...                handler, so that is the fallback the keyword uses.
+    Set Test Variable    ${CLICK_TIMEOUT}    3s
+    New Context    viewport=${VIEWPORT}
+    New Page       ${BASE}/overlay
+    Click Doc Element    button:has-text("Edit") >> visible=true >> nth=0
+    ${title}=    Get Title
+    Should Be Equal    ${title}    CLICKED
+    Log To Console    DOM click landed through a covering overlay
+
+Missing Tab Fails Fast With A Useful Message
+    [Documentation]    Regression test for 2026-07-31: the "More" overflow fallback was clicked
+    ...                blindly, so an app without one burned 45s and reported only a Playwright
+    ...                timeout. It must now name the tab and explain what to check.
+    Set Test Variable    ${CLICK_TIMEOUT}    2s
+    New Context    viewport=${VIEWPORT}
+    New Page       ${BASE}/navbar-no-more
+    ${status}    ${error}=    Run Keyword And Ignore Error
+    ...    Open Tab From Navigation Bar    Opportunities
+    Should Be Equal    ${status}    FAIL
+    Should Contain     ${error}    Opportunities
+    Should Contain     ${error}    no "More"
+    Log To Console    missing tab reported as: ${error}
 
 Readiness Gate Ignores A Hidden Spinner
     [Documentation]    Salesforce leaves display:none spinners in the DOM. Gating on their

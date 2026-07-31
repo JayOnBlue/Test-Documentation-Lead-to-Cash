@@ -37,6 +37,9 @@ ${READY_TIMEOUT}    45s
 # price paid per stubborn page, not a correctness threshold. At 45s it cost the
 # 2026-07-30 run about 16 minutes of pure waiting. Override with -o vars ARTIFACT_TIMEOUT:30s
 ${ARTIFACT_TIMEOUT}    12s
+# Per-click budget. Well below READY_TIMEOUT so a missing button costs seconds, not the
+# 45s Playwright spends retrying before it gives up (2 captures lost that way on 2026-07-31).
+${CLICK_TIMEOUT}    10s
 # Final settle after the page reports ready — lets images/fonts/late XHRs paint.
 # Override per run with: -o vars SETTLE:3s
 ${SETTLE}        2s
@@ -265,9 +268,9 @@ Open The App Launcher
     [Documentation]    Open the App Launcher panel. Uses the library keyword if present, else clicks the waffle icon.
     ${ok}=           Run Keyword And Return Status    Open App Launcher
     IF    not ${ok}
-        ${clicked}=    Run Keyword And Return Status    Click    button[title="App Launcher"]
+        ${clicked}=    Run Keyword And Return Status    Click Doc Element    button[title="App Launcher"]
         IF    not ${clicked}
-            Click    .slds-icon-waffle
+            Click Doc Element    .slds-icon-waffle
         END
     END
     Wait For Elements State    input[placeholder*="Search apps"]    visible    timeout=20s
@@ -280,15 +283,52 @@ Show App Launcher Search
         Open The App Launcher
     END
     Fill Text        input[placeholder*="Search apps"]    ${term}
-    Wait Until Keyword Succeeds    15s    1s    Page Has No Loading Artifacts
-    Sleep            1.5s
+    # Was a strict `Wait Until Keyword Succeeds 15s ... Page Has No Loading Artifacts`, which
+    # hard-failed 5 captures on 2026-07-31: the App Launcher panel keeps a spinner while its
+    # results settle. Route through the soft gate like every other wait in this file, so no
+    # readiness check can abort a capture on its own.
+    Wait For Lightning Ready
+
+Click Doc Element
+    [Documentation]    A click that survives Salesforce's sticky headers and scroll panes.
+    ...
+    ...                Playwright refuses to click an element it judges "outside of the
+    ...                viewport" and then retries until the browser timeout. On 2026-07-31 that
+    ...                cost two captures 45 seconds each and produced no image, for buttons
+    ...                that were present and visible the whole time — the log shows
+    ...                "87 x waiting for element to be visible, enabled and stable ... element
+    ...                is outside of the viewport".
+    ...
+    ...                Two attempts, weakest intervention first:
+    ...                  1. scroll into view, then a normal click — the only tier that exercises
+    ...                     real Salesforce pointer handling, so it must be tried first;
+    ...                  2. a DOM-level el.click(), which always reaches the element's own
+    ...                     handler. That is what a documentation screenshot needs: the app has
+    ...                     to advance, not to receive a pixel-accurate mouse event.
+    ...
+    ...                Note there is deliberately NO force=True tier. `Click With Options
+    ...                force=True` skips Playwright's actionability CHECK but still dispatches a
+    ...                real pointer event at the element's centre, which a covering sticky
+    ...                header swallows — so it reports success while achieving nothing. Verified
+    ...                against the mock overlay page: the keyword passed and the button's
+    ...                handler never ran, which makes its status worthless as a fallback signal.
+    ...
+    ...                `Click` in robotframework-browser 20.x takes only (selector, button).
+    [Arguments]      ${selector}    ${timeout}=${CLICK_TIMEOUT}
+    Wait For Elements State    ${selector}    visible    ${timeout}
+    Run Keyword And Ignore Error    Scroll To Element    ${selector}
+    ${clicked}=      Run Keyword And Return Status    Click    ${selector}
+    IF    not ${clicked}
+        Log          Normal click on ${selector} failed; dispatching el.click() instead.    level=WARN
+        Evaluate JavaScript    ${selector}    (el) => el.click()
+    END
 
 Click App Launcher Result
     [Documentation]    Click a result (app tile or item link) inside the open App Launcher by its visible name.
     [Arguments]      ${name}
-    ${scoped}=       Run Keyword And Return Status    Click    one-app-launcher-menu a:has-text("${name}") >> nth=0
+    ${scoped}=       Run Keyword And Return Status    Click Doc Element    one-app-launcher-menu a:has-text("${name}") >> nth=0
     IF    not ${scoped}
-        Click        a:has-text("${name}") >> nth=0
+        Click Doc Element    a:has-text("${name}") >> nth=0
     END
     Wait For Lightning Ready
 
@@ -296,18 +336,30 @@ Open Tab From Navigation Bar
     [Documentation]    Click a tab by its visible label in the current app's navigation bar,
     ...                falling back to the "More" overflow menu when the tab isn't directly visible.
     [Arguments]      ${tab_label}
-    ${direct}=       Run Keyword And Return Status    Click    one-app-nav-bar-item-container a:has-text("${tab_label}") >> visible=true >> nth=0
+    ${direct}=       Run Keyword And Return Status
+    ...    Click Doc Element    one-app-nav-bar-item-container a:has-text("${tab_label}") >> visible=true >> nth=0
     IF    not ${direct}
-        Click        one-app-nav-bar button:has-text("More")
-        Click        .slds-dropdown a:has-text("${tab_label}") >> nth=0
+        # The overflow menu only exists when tabs are actually hidden. Clicking it blindly
+        # cost a capture 45 seconds on 2026-07-31 waiting for a "More" button this app does
+        # not have, so probe for it and report the real problem instead of timing out.
+        ${overflow}=    Run Keyword And Return Status
+        ...    Click Doc Element    one-app-nav-bar button:has-text("More")
+        IF    not ${overflow}
+            ${msg}=    Catenate    SEPARATOR=${SPACE}
+            ...    Tab "${tab_label}" is not in the navigation bar and this app has no "More"
+            ...    overflow menu. Either the tab is not in the app, or its label differs from
+            ...    the docs. Check the `click_tab` action for this screenshot.
+            Fail       ${msg}
+        END
+        Click Doc Element    .slds-dropdown a:has-text("${tab_label}") >> nth=0
     END
     Wait For Lightning Ready
 
 Click New Action
     [Documentation]    Click the "New" action on the current list view and wait for the form (modal or full page).
-    ${ok}=           Run Keyword And Return Status    Click    button:has-text("New") >> visible=true >> nth=0
+    ${ok}=           Run Keyword And Return Status    Click Doc Element    button:has-text("New") >> visible=true >> nth=0
     IF    not ${ok}
-        Click        a[title="New"] >> nth=0
+        Click Doc Element    a[title="New"] >> nth=0
     END
     Run Keyword And Ignore Error    Wait Until Modal Is Open
     Wait For Lightning Ready
@@ -346,7 +398,7 @@ Run Doc Action
     ELSE IF    '${verb}' == 'fill_field'
         Fill Form Field    ${action}[field]    ${action}[value]
     ELSE IF    '${verb}' == 'click_button'
-        Click        button:has-text("${action}[arg]") >> visible=true >> nth=0
+        Click Doc Element    button:has-text("${action}[arg]") >> visible=true >> nth=0
         Wait For Lightning Ready
     ELSE IF    '${verb}' == 'open_record'
         ${rid}=      Record Id For Object    ${action}[arg]

@@ -30,6 +30,10 @@ SHELL = (
 )
 
 
+# Sets the document title when clicked, so a test can prove the click landed.
+BUTTON = '<button id="t" onclick="document.title=\'CLICKED\'">Edit</button>'
+
+
 def page(title, body):
     return f"<!doctype html><html><head><title>{title}</title></head><body>{body}</body></html>"
 
@@ -46,6 +50,19 @@ class Handler(BaseHTTPRequestHandler):
             body = page("Home | Salesforce", '<div class="slds-spinner">loading</div>' + SHELL)
         elif path.startswith("/hiddenspinner"):
             body = page("Home | Salesforce", '<div class="slds-spinner" style="display:none">x</div>' + SHELL)
+        elif path.startswith("/belowfold"):
+            # A button 3000px down: Playwright must scroll before it can click.
+            body = page("Home | Salesforce", SHELL + '<div style="height:3000px"></div>' + BUTTON)
+        elif path.startswith("/overlay"):
+            # A button fully covered by a fixed overlay: a normal click is refused because
+            # something else intercepts the pointer, and only force=True gets through.
+            body = page("Home | Salesforce", SHELL + BUTTON
+                        + '<div style="position:fixed;inset:0;background:rgba(0,0,0,.1)"></div>')
+        elif path.startswith("/navbar-no-more"):
+            # An app nav bar that has no "More" overflow menu and not the wanted tab.
+            body = page("Home | Salesforce", SHELL
+                        + '<one-app-nav-bar><one-app-nav-bar-item-container>'
+                        + '<a href="#">Home</a></one-app-nav-bar-item-container></one-app-nav-bar>')
         elif path.startswith("/lightning/noshell"):
             body = page("Home | Salesforce", '<div id="unrecognised-theme">content</div>')
         elif path.startswith("/lightning/"):
