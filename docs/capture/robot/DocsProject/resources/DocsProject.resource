@@ -30,8 +30,13 @@ Library          ${CURDIR}/DocsCapture.py
 # Everything Lightning shows while content is still loading: spinners plus the grey
 # skeleton "stencil" placeholders (the bars you see in a screenshot taken too early).
 ${LOADING_ARTIFACTS}    css=.slds-spinner, lightning-spinner, .stencil, .forceStencil, [class*="stencil" i], [class*="skeleton" i]
-# How long Wait For Lightning Ready will keep waiting for those to clear.
+# Browser-operation timeout: navigation, login, waiting for an element to appear.
 ${READY_TIMEOUT}    45s
+# How long to wait for LOADING_ARTIFACTS to clear before capturing anyway. Deliberately
+# much shorter than READY_TIMEOUT: some Salesforce pages never reach zero, so this is the
+# price paid per stubborn page, not a correctness threshold. At 45s it cost the
+# 2026-07-30 run about 16 minutes of pure waiting. Override with -o vars ARTIFACT_TIMEOUT:30s
+${ARTIFACT_TIMEOUT}    12s
 # Final settle after the page reports ready — lets images/fonts/late XHRs paint.
 # Override per run with: -o vars SETTLE:3s
 ${SETTLE}        2s
@@ -163,9 +168,16 @@ Log Lightning Shell Presence
         # One positional argument, then one named. `Log` is (message, level=INFO, ...), so
         # two positionals would bind the second to `level` and collide with level=WARN —
         # "got multiple values for argument 'level'", which failed the 10:19 run.
+        # Report what IS on the page rather than only what is missing. On 2026-07-30 this
+        # warned on a page that captured 16 screenshots perfectly well, so the selector list
+        # — not the page — is what needs updating; the element names below say to what.
+        ${ok}    ${tags}=    Run Keyword And Ignore Error    Evaluate JavaScript    ${None}
+        ...    () => [...new Set([...document.body.querySelectorAll('*')].map(e => e.tagName.toLowerCase()))].slice(0, 20).join(', ')
+        ${present}=    Set Variable If    '${ok}' == 'PASS'    ${tags}    (could not be read)
         ${warning}=    Catenate    SEPARATOR=${SPACE}
-        ...    Logged in to a Lightning URL, but none of the known shell selectors matched.
-        ...    Captures may need updated selectors for this org's theme.
+        ...    Logged in to a Lightning URL, but none of the ${LIGHTNING_SHELL} selectors
+        ...    matched. This is informational only — login is confirmed from the URL, and
+        ...    captures proceed. Elements actually present: ${present}
         Log            ${warning}    level=WARN
     END
 Set Doc Base Url
@@ -186,18 +198,38 @@ Set Force Flag
 # ---------------------------------------------------------------------------
 
 Page Has No Loading Artifacts
-    [Documentation]    Fails while any spinner or stencil skeleton is still visible.
+    [Documentation]    Fails while any spinner or stencil skeleton is still visible. Used as
+    ...                the polled condition inside `Wait For Lightning Ready` — never call it
+    ...                directly as an assertion, because a page is allowed to keep a spinner.
     ${count}=        Get Element Count    ${LOADING_ARTIFACTS} >> visible=true
     Should Be Equal As Integers    ${count}    0    Still loading: ${count} spinner/stencil element(s) visible
 
 Wait For Lightning Ready
-    [Documentation]    Strict readiness gate, in three stages: (1) CumulusCI's own
-    ...                Lightning loading wait, (2) poll until zero visible spinners AND
-    ...                zero visible stencil skeletons, (3) a short settle so late paints
-    ...                (images, fonts, list rows) land. Screenshots must only be taken
-    ...                after this keyword.
+    [Documentation]    Waits for the page to settle, then lets the capture proceed either way.
+    ...
+    ...                Readiness is a BEST EFFORT, not a precondition. Real Salesforce pages
+    ...                routinely keep a spinner or stencil on screen indefinitely — a chart
+    ...                still fetching, a related list polling, a dashboard component that
+    ...                never finishes — so "zero visible loading artifacts" is a state some
+    ...                pages never reach. Treating it as a hard gate cost the 2026-07-30 run
+    ...                21 captures and ~16 minutes: each one waited the full timeout and then
+    ...                failed, producing no image at all.
+    ...
+    ...                A screenshot with a stray spinner is worth far more than no screenshot,
+    ...                so a page that will not settle is captured anyway and the shortfall is
+    ...                logged. The wait is also bounded by ${ARTIFACT_TIMEOUT} rather than the
+    ...                45s browser timeout, to keep the cost of a stubborn page small.
     Run Keyword And Ignore Error    Wait Until Loading Is Complete
-    Wait Until Keyword Succeeds    ${READY_TIMEOUT}    1s    Page Has No Loading Artifacts
+    ${settled}=      Run Keyword And Return Status
+    ...    Wait Until Keyword Succeeds    ${ARTIFACT_TIMEOUT}    1s    Page Has No Loading Artifacts
+    IF    not ${settled}
+        ${remaining}=    Get Element Count    ${LOADING_ARTIFACTS} >> visible=true
+        ${note}=     Catenate    SEPARATOR=${SPACE}
+        ...    Page still shows ${remaining} loading artifact(s) after ${ARTIFACT_TIMEOUT};
+        ...    capturing anyway. If the image looks half-rendered, raise ${ARTIFACT_TIMEOUT}
+        ...    or narrow ${LOADING_ARTIFACTS} for this page.
+        Log          ${note}    level=WARN
+    END
     Sleep            ${SETTLE}
 
 # ---------------------------------------------------------------------------

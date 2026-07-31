@@ -49,14 +49,19 @@ function listImages() {
  * first line reported exactly that header and threw the diagnosis away, so take the
  * first couple of lines that actually say something.
  */
-function firstUsefulLines(text, max = 2) {
-  const lines = String(text)
+function decodeEntities(text) {
+  return String(text)
     // Numeric character references first: Robot writes Playwright's box-drawing frame
     // as &#9484;&#9472;… and without decoding them the filter below cannot recognise
     // the frame, so the "cause" line came out as a row of entity codes.
     .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
-    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'").replace(/&amp;/g, '&');
+}
+
+function firstUsefulLines(text, max = 2) {
+  const lines = decodeEntities(text)
     .split('\n')
     .map((l) => l.trim())
     // Drop blank lines, bare "...:" headers, and Playwright's box-drawing frame.
@@ -64,6 +69,36 @@ function firstUsefulLines(text, max = 2) {
     .map((l) => l.replace(/^[│|]\s*/, '').replace(/\s*[│|]$/, '').trim())
     .filter(Boolean);
   return lines.slice(0, max).join(' — ').slice(0, 300) || '(no message; see the Robot report artifact)';
+}
+
+/**
+ * A capture test runs every screenshot with Run Keyword And Continue On Failure, so its
+ * message is Robot's "Several failures occurred:" list — one numbered entry per screenshot.
+ * Printing the first two lines of that hid the shape of the problem: 21 identical readiness
+ * timeouts read as a single mysterious error. Group identical causes and count them.
+ */
+function summariseTestFailure(raw) {
+  const text = decodeEntities(raw);
+  if (!/Several failures occurred/i.test(text)) return firstUsefulLines(raw);
+  const items = text
+    .split(/^\s*\d+\)\s*/m)
+    .slice(1)
+    .map((item) => item.split('\n').map((l) => l.trim()).filter(Boolean)[0] || '')
+    .filter(Boolean);
+  if (!items.length) return firstUsefulLines(raw);
+  const groups = new Map();
+  for (const item of items) {
+    // Collapse the varying parts (counts, timings) so "1 spinner" and "6 spinner" group.
+    const key = item.replace(/\d+/g, 'N');
+    groups.set(key, (groups.get(key) || 0) + 1);
+  }
+  const parts = [...groups.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([cause, n]) => `${n}× ${cause.slice(0, 160)}`);
+  const shown = [...groups.values()].slice(0, 3).reduce((a, b) => a + b, 0);
+  if (groups.size > 3) parts.push(`…and ${items.length - shown} more`);
+  return `${items.length} screenshot(s) failed — ${parts.join('; ')}`;
 }
 
 function robotStats() {
@@ -78,32 +113,56 @@ function robotStats() {
   // reported the wrong test as the failing one.
   const failedTests = [...xml.matchAll(/<test\b[^>]*\bname="([^"]*)"([\s\S]*?)<\/test>/g)]
     .map(([, name, body]) => {
-      const failed = body.match(/<status\b[^>]*\bstatus="FAIL"[^>]*(?:\/>|>([\s\S]*?)<\/status>)/);
-      if (!failed) return null;
-      return { name, message: firstUsefulLines(failed[1] || '') };
+      // Take the test's OWN status, which is its LAST <status> — the ones before it belong
+      // to nested keywords, including failures that were caught and handled. Taking the
+      // first match reported `'/_ui/...' does not contain '{recordId}'` as the cause of a
+      // run whose real problem was 21 readiness timeouts: that message came from a
+      // Should Contain inside Run Keyword And Return Status, i.e. a deliberate probe.
+      const statuses = [...body.matchAll(/<status\b[^>]*\bstatus="(\w+(?: \w+)?)"[^>]*(?:\/>|>([\s\S]*?)<\/status>)/g)];
+      const own = statuses[statuses.length - 1];
+      if (!own || own[1] !== 'FAIL') return null;
+      return { name, message: summariseTestFailure(own[2] || '') };
     })
     .filter(Boolean);
+
+  // Screenshots skipped because the org has no record of the required object. A data gap,
+  // not a code or selector problem, so it gets its own section: the fix is creating a
+  // record, and no amount of re-running will change the outcome without one.
+  const noRecord = [...xml.matchAll(/Skipping ([\w-]+) [^<]*?no sample record/g)].map((m) => m[1]);
+
+  // Diagnoses must be read from MESSAGES and STATUSES only. Robot also writes every
+  // keyword's <arg> values and <doc> text into output.xml — including those of IF branches
+  // that never ran — so scanning the raw file made the 2026-07-30 run report a frontdoor
+  // login failure that never happened: the text came from the arguments of a Catenate in an
+  // unexecuted branch.
+  const evidence = xml.replace(/<arg>[\s\S]*?<\/arg>/g, ' ').replace(/<doc>[\s\S]*?<\/doc>/g, ' ');
   // Known root causes worth naming outright, so nobody has to read Playwright's
   // box-drawing error art to work out what to change.
   const diagnoses = [];
-  if (/Missing X server|without having a XServer|\$DISPLAY/i.test(xml)) {
+  if (/Missing X server|without having a XServer|\$DISPLAY/i.test(evidence)) {
     diagnoses.push('Playwright tried to launch a HEADED browser and the runner has no display. ' +
       'CumulusCI picks headless purely from the `${BROWSER}` variable — it must start with "headless" ' +
       '(e.g. `headlesschrome`). Check the `${BROWSER}` default in docs_capture.robot.');
   }
-  if (/viewport\.\w+: expected integer, got string|newContext:.*expected integer/i.test(xml)) {
+  if (/viewport\.\w+: expected integer, got string|newContext:.*expected integer/i.test(evidence)) {
     diagnoses.push('Playwright rejected the browser context because the viewport was passed as strings. ' +
       'CumulusCI\'s own `Open Test Browser` does this (it splits "WIDTHxHEIGHT" and forwards the parts ' +
       'unconverted), so the suite must build the context itself — see `Open Docs Browser` in ' +
       'DocsProject.resource and the &{VIEWPORT} variable, whose values must be ${int} not plain text.');
   }
-  if (/Timed out waiting for a lightning page/i.test(xml)) {
+  if (/Timed out waiting for a lightning page/i.test(evidence)) {
     diagnoses.push('CumulusCI waited for Salesforce to redirect frontdoor.jsp to a `/lightning/` URL and it ' +
       'never did — where frontdoor lands depends on the user\'s default app and UI setting. The suite now ' +
       'requests the destination explicitly (`frontdoor.jsp?...&retURL=/lightning/page/home`) and judges ' +
       'readiness from the Lightning app shell in the DOM. If you still see this, the org config is stale.');
   }
-  if (/got multiple values for argument|expected \d+ argument|No keyword with name/i.test(xml)) {
+  if (/Still loading: \d+ spinner\/stencil/i.test(evidence)) {
+    diagnoses.push('One or more pages never reached "zero visible spinners", so the readiness gate gave up on ' +
+      'them. This is expected on some Salesforce pages (a chart still fetching, a polling related list) and is ' +
+      'no longer fatal — `Wait For Lightning Ready` now captures anyway and logs the shortfall. If a captured ' +
+      'image genuinely looks half-rendered, raise ${ARTIFACT_TIMEOUT} or narrow ${LOADING_ARTIFACTS}.');
+  }
+  if (/got multiple values for argument|expected \d+ argument|No keyword with name/i.test(evidence)) {
     diagnoses.push('This is a KEYWORD SIGNATURE bug in the capture suite itself, not an org, token or ' +
       'selector problem — Robot could not bind the arguments given to a keyword. Nothing was captured ' +
       'because suite setup died. Reproduce it in seconds without a real org, and without spending a CI ' +
@@ -111,32 +170,32 @@ function robotStats() {
       '(A frequent cause: `Log`/`Fail` take (message, level=…) / (message, *tags), so multi-line ' +
       'continuations become extra POSITIONAL arguments — catenate them into one string first.)');
   }
-  if (/strict mode violation/i.test(xml)) {
+  if (/strict mode violation/i.test(evidence)) {
     diagnoses.push('A selector matched MORE THAN ONE element and Playwright runs in strict mode, which rejects ' +
       'that instead of picking the first. The error text lists every element it matched. Fix the selector in ' +
       'DocsProject.resource by appending `>> nth=0` (as the other capture keywords do), or count with ' +
       '`Get Element Count`, which is not a strict operation. This is not an org or data problem.');
   }
-  if (/Frontdoor login (did not reach|never reached)/i.test(xml)) {
+  if (/Frontdoor login (did not reach|never reached)/i.test(evidence)) {
     diagnoses.push('The browser did not land on a `/lightning/` path — the failure message names the page title ' +
       'and URL it reached. A login screen there means the pasted access token is not usable for browser login ' +
       '(expired, or the org restricts session reuse): mint a fresh one and re-dispatch.');
   }
-  if (/Suite setup failed|Parent suite setup failed/i.test(xml) && !diagnoses.length) {
+  if (/Suite setup failed|Parent suite setup failed/i.test(evidence) && !diagnoses.length) {
     diagnoses.push('The suite SETUP failed, so no capture was even attempted — every screenshot is missing ' +
       'for one shared reason (browser launch, login URL, or org connection), not because of individual selectors.');
   }
-  if (/INVALID_AUTH_HEADER|Expired session/i.test(xml)) {
+  if (/INVALID_AUTH_HEADER|Expired session/i.test(evidence)) {
     diagnoses.push('The org session was rejected. If the token itself is valid, check that the org config ' +
       'handed to CumulusCI has a real access_token (a redacted `sf org display` value causes exactly this).');
   }
-  if (/INVALID_SESSION_ID/i.test(xml)) {
+  if (/INVALID_SESSION_ID/i.test(evidence)) {
     diagnoses.push('The Salesforce session expired mid-run — mint a fresh access token and re-dispatch.');
   }
   const base = stat
     ? { pass: +stat[1], fail: +stat[2], skip: +(stat[3] || 0) }
     : { pass: 0, fail: 0, skip: 0 };
-  return { ...base, failedTests, diagnoses };
+  return { ...base, failedTests, diagnoses, noRecord };
 }
 
 function parseOutcomes() {
@@ -211,6 +270,17 @@ if (robot && robot.failedTests.length) {
   out.push('### ❌ Failing captures');
   out.push('');
   for (const t of robot.failedTests) out.push(`- **${t.name}** — ${t.message}`);
+  out.push('');
+}
+
+if (robot && robot.noRecord?.length) {
+  out.push(`### 📄 Skipped — the org has no record to show (${robot.noRecord.length})`);
+  out.push('');
+  out.push('These are **data gaps, not bugs**: the documentation describes a record page, and the org has no');
+  out.push('record of that object to open. Re-running changes nothing until one exists — create a sample');
+  out.push('record (or deploy the demo data) and re-dispatch.');
+  out.push('');
+  for (const id of robot.noRecord) out.push(`- \`${id}\``);
   out.push('');
 }
 

@@ -103,6 +103,7 @@ lost to bugs this catches in about fifteen seconds:
 | `viewport.width: expected integer, got string` | Viewport Is Passed To Playwright As Integers |
 | `strict mode violation: … resolved to 4 elements` | Shell Selector Counts Without Tripping Strict Mode |
 | `Keyword 'BuiltIn.Log' got multiple values for argument 'level'` | Shell Diagnostic Survives A Zero Count |
+| 21 captures produced no image because a spinner never cleared | Readiness Gate Captures Anyway When A Spinner Never Clears |
 
 It is deliberately outside `robot/DocsProject/`, and `cumulusci.yml` names a single suite file,
 so `cci task run capture_docs` never picks it up.

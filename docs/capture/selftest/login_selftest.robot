@@ -93,12 +93,32 @@ Shell Selector Counts Without Tripping Strict Mode
     Should Contain     ${error}    strict mode violation
     Log To Console    counted ${n} shell elements; strict wait correctly refuses them
 
-Readiness Gate Blocks On A Visible Spinner
+Loading Artifact Probe Reports A Visible Spinner
+    [Documentation]    `Page Has No Loading Artifacts` is the POLLED CONDITION, so it must
+    ...                still fail while a spinner is up. What must not fail is the gate that
+    ...                polls it — see the next test.
     New Context    viewport=${VIEWPORT}
     New Page       ${BASE}/spinner
     ${status}    ${error}=    Run Keyword And Ignore Error    Page Has No Loading Artifacts
     Should Be Equal    ${status}    FAIL
     Should Contain     ${error}    Still loading
+
+Readiness Gate Captures Anyway When A Spinner Never Clears
+    [Documentation]    Regression test for 2026-07-30: 21 screenshots produced NO IMAGE because
+    ...                the gate treated a permanently visible spinner as fatal, after waiting
+    ...                the full 45s each time (~16 minutes of the run). Readiness is best
+    ...                effort now: the page is captured and the shortfall is logged.
+    ...
+    ...                ARTIFACT_TIMEOUT is shortened here only to keep the self-test quick —
+    ...                the branch under test is the timeout path itself.
+    Set Test Variable    ${ARTIFACT_TIMEOUT}    3s
+    New Context    viewport=${VIEWPORT}
+    New Page       ${BASE}/spinner
+    Wait For Lightning Ready
+    ${still_spinning}=    Get Element Count    ${LOADING_ARTIFACTS} >> visible=true
+    Should Be True    ${still_spinning} > 0    the mock page should still be showing a spinner
+    Take Screenshot    filename=${OUTPUT DIR}/captured-despite-spinner    fullPage=${False}
+    Log To Console    \ncaptured an image with ${still_spinning} spinner(s) still on screen
 
 Readiness Gate Ignores A Hidden Spinner
     [Documentation]    Salesforce leaves display:none spinners in the DOM. Gating on their
