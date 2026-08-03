@@ -223,22 +223,50 @@ jobs:
 
       # The ONLY thing this workflow ever writes back to the repository is
       # docs/images/ — never scripts, never site output, never metadata.
+      # `if: always()` is the single most important line in this workflow.
+      #
+      # Robot exits non-zero if ANY ONE of the 41 screenshots fails, and with a step's
+      # default `if: success()` that made this step skip — so a run that captured 30 good
+      # images threw all 30 away. Every run then started from zero, re-capturing everything
+      # (~18 minutes) only to discard it again. The images were only ever preserved in the
+      # run artifact, which the next run cannot see.
+      #
+      # Committing partial progress makes the capture INCREMENTAL: `Capture * Screenshot`
+      # skips any id whose file already exists (unless recapture:true), so each run only
+      # works on what is still missing and gets steadily faster. A screenshot that is
+      # already on disk is a screenshot nobody pays for again.
       - name: Commit screenshots
         id: commit
+        if: always()
         run: |
+          shopt -s nullglob
+          images=(docs/images/*.png docs/images/*.jpg docs/images/*.jpeg)
+          if [ ${#images[@]} -eq 0 ]; then
+            echo "No images were captured, so there is nothing to commit."
+            exit 0
+          fi
           git config user.name "sf-screenshots-bot"
           git config user.email "sf-screenshots-bot@users.noreply.github.com"
           git add docs/images
           if git diff --cached --quiet; then
-            echo "No screenshot changes to commit."
-          else
-            git commit -m "docs(screenshots): refresh captured Salesforce screenshots [skip ci]"
-            git push
+            echo "All ${#images[@]} image(s) are already committed; nothing new to push."
+            exit 0
           fi
+          new_count="$(git diff --cached --name-only -- docs/images | wc -l)"
+          git commit -m "docs(screenshots): add/refresh ${new_count} captured screenshot(s) [skip ci]"
+          # Another run (or the docs pipeline) may have pushed since checkout. Rebase onto
+          # whatever is there rather than failing and losing the images again.
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+          git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+          echo "Committed ${new_count} screenshot file(s)."
 
       # Redeploy GitHub Pages with the new images (docs-pipeline's push trigger
       # only watches force-app/**, so an images-only commit wouldn't rebuild it).
+      # Also `always()` + "did we actually push": a partial capture still deserves to appear
+      # on the site, and there is nothing to redeploy when no new image was committed.
       - name: Trigger docs pipeline for Pages redeploy
+        if: always() && steps.commit.outputs.pushed == 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}

@@ -166,9 +166,20 @@ function robotStats() {
   }
   if (/locator\.click: Timeout|element is outside of the viewport/i.test(evidence)) {
     diagnoses.push('A click timed out. If the log says "element is outside of the viewport", the button was ' +
-      'present but Playwright would not click it — `Click Doc Element` now scrolls it into view and falls back ' +
-      'to a forced click. If instead the selector never resolved, the button genuinely is not on that page: ' +
-      'check the action verb and its label in the screenshot block that names it.');
+      'present but Playwright would not click it — `Click Doc Element` scrolls it into view and, failing that, ' +
+      'dispatches a DOM click. If instead the selector never resolved, the button genuinely is not on that ' +
+      'page: check the action verb and its label in the screenshot block that names it.');
+  }
+  if (/locator\.fill: Timeout|Could not find a field for/i.test(evidence)) {
+    diagnoses.push('A `fill_field` action named a field the form does not have. This is a DOCS-vs-ORG ' +
+      'mismatch, not a timing problem: `fill_field` needs the field API NAME (LastName, Amount), the field ' +
+      'must be on that page layout for this user, and a picklist such as Lead.Rating is chosen from a ' +
+      'combobox rather than typed. Fix the `fill_field` action in the screenshot block named in the message.');
+  }
+  if (/is not in the navigation bar/i.test(evidence)) {
+    diagnoses.push('A `click_tab` action named a tab that the app does not have in its navigation bar. Note ' +
+      '"Related" and "Details" are tabs INSIDE a record page, not app tabs — those need an `open_record` ' +
+      'action plus a click, not `click_tab`. Fix the screenshot block named in the message.');
   }
   const suiteSetupDied = /(?:Parent s|S)uite setup failed/i.test(evidence);
   if (suiteSetupDied && /got multiple values for argument|expected \d+ argument|No keyword with name/i.test(evidence)) {
@@ -228,7 +239,7 @@ const skippedSteps = Object.entries(outcomes).filter(([, v]) => v === 'skipped' 
 const warnings = [];
 if (!manifest.length) warnings.push('The screenshot manifest is empty — no `screenshot` blocks were found in docs/business/**. Nothing could be captured.');
 if (manifest.length && !images.length) warnings.push(`No images exist at all: 0 of ${wanted.length} requested screenshots were captured.`);
-if (images.length && missing.length) warnings.push(`${missing.length} of ${wanted.length} requested screenshots are still missing (the docs render a "Screenshot pending" placeholder for each).`);
+if (images.length && missing.length) warnings.push(`${missing.length} of ${wanted.length} requested screenshots are still missing (the docs render a "Screenshot pending" placeholder for each). The ${images.length} captured so far are COMMITTED, so the next run skips them and works only on these — no need to re-dispatch with recapture.`);
 if (robot && robot.fail > 0) warnings.push(`Robot reported ${robot.fail} failing capture(s) — the suite continues past individual failures, so the job can look green while images are absent.`);
 if (!robot && failedSteps.length) warnings.push('Robot never produced output.xml, so the capture suite did not start — the failure is upstream of it (auth, org config, or CumulusCI project setup).');
 

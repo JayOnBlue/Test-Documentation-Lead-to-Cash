@@ -33,6 +33,14 @@ SHELL = (
 # Sets the document title when clicked, so a test can prove the click landed.
 BUTTON = '<button id="t" onclick="document.title=\'CLICKED\'">Edit</button>'
 
+# A Lightning picklist: a combobox button plus a listbox item. `Fill Text` can never
+# satisfy this shape, which is why Fill Form Field has a picklist strategy.
+PICKLIST = (
+    '<lightning-combobox><label>Rating</label><button>Select</button></lightning-combobox>'
+    '<lightning-base-combobox-item onclick="document.title=\'PICKED\'">Hot'
+    '</lightning-base-combobox-item>'
+)
+
 
 def page(title, body):
     return f"<!doctype html><html><head><title>{title}</title></head><body>{body}</body></html>"
@@ -58,6 +66,15 @@ class Handler(BaseHTTPRequestHandler):
             # something else intercepts the pointer, and only force=True gets through.
             body = page("Home | Salesforce", SHELL + BUTTON
                         + '<div style="position:fixed;inset:0;background:rgba(0,0,0,.1)"></div>')
+        elif path.startswith("/permanent-stencils"):
+            # Five stencils that never go away — what nearly every real page in this org
+            # looks like. The readiness gate must notice the count is static and move on.
+            body = page("Home | Salesforce", SHELL + ('<div class="stencil">x</div>' * 5))
+        elif path.startswith("/emptyform"):
+            # A "New" modal with no matching field, to prove a missing field fails fast.
+            body = page("Home | Salesforce", SHELL + '<div class="slds-modal"><input name="Other"></div>')
+        elif path.startswith("/picklistform"):
+            body = page("Home | Salesforce", SHELL + PICKLIST)
         elif path.startswith("/navbar-no-more"):
             # An app nav bar that has no "More" overflow menu and not the wanted tab.
             body = page("Home | Salesforce", SHELL

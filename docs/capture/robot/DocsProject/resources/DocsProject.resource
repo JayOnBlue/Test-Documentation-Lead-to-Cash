@@ -23,6 +23,7 @@ Documentation    Reusable keywords for capturing documentation screenshots.
 # the suite level, so this file's keywords still see both libraries.
 Library          String
 Library          Collections
+Library          DateTime
 Library          ${CURDIR}/DocsCapture.py
 
 
@@ -40,6 +41,14 @@ ${ARTIFACT_TIMEOUT}    12s
 # Per-click budget. Well below READY_TIMEOUT so a missing button costs seconds, not the
 # 45s Playwright spends retrying before it gives up (2 captures lost that way on 2026-07-31).
 ${CLICK_TIMEOUT}    10s
+# How many identical readings mean "this page is done changing" (see
+# Wait For Loading Artifacts To Settle), and how long between readings.
+${ARTIFACT_STABLE_POLLS}    ${2}
+${ARTIFACT_POLL}    1s
+# Per-attempt budget when locating a form field. Each strategy used to call `Fill Text`
+# directly, which waits the full 45s browser timeout: three fields that were not on the
+# form cost the 2026-08-03 run over two minutes and produced no images.
+${FIELD_TIMEOUT}    4s
 # Final settle after the page reports ready — lets images/fonts/late XHRs paint.
 # Override per run with: -o vars SETTLE:3s
 ${SETTLE}        2s
@@ -223,17 +232,55 @@ Wait For Lightning Ready
     ...                logged. The wait is also bounded by ${ARTIFACT_TIMEOUT} rather than the
     ...                45s browser timeout, to keep the cost of a stubborn page small.
     Run Keyword And Ignore Error    Wait Until Loading Is Complete
-    ${settled}=      Run Keyword And Return Status
-    ...    Wait Until Keyword Succeeds    ${ARTIFACT_TIMEOUT}    1s    Page Has No Loading Artifacts
-    IF    not ${settled}
-        ${remaining}=    Get Element Count    ${LOADING_ARTIFACTS} >> visible=true
+    ${remaining}=    Wait For Loading Artifacts To Settle
+    IF    ${remaining} > 0
         ${note}=     Catenate    SEPARATOR=${SPACE}
-        ...    Page still shows ${remaining} loading artifact(s) after ${ARTIFACT_TIMEOUT};
-        ...    capturing anyway. If the image looks half-rendered, raise ${ARTIFACT_TIMEOUT}
-        ...    or narrow ${LOADING_ARTIFACTS} for this page.
+        ...    Page still shows ${remaining} loading artifact(s) and the count has stopped
+        ...    changing; capturing anyway. If the image looks half-rendered, raise
+        ...    ${ARTIFACT_TIMEOUT} or narrow ${LOADING_ARTIFACTS} for this page.
         Log          ${note}    level=WARN
     END
     Sleep            ${SETTLE}
+
+Wait For Loading Artifacts To Settle
+    [Documentation]    Returns how many loading artifacts are still visible, waiting only for
+    ...                as long as that number is still IMPROVING.
+    ...
+    ...                Waiting for zero and nothing else cost the 2026-08-03 run roughly six
+    ...                minutes. Almost every page in this org keeps 5-7 stencil/spinner
+    ...                elements on screen permanently, so the gate could never succeed and
+    ...                each of ~30 captures paid the whole ${ARTIFACT_TIMEOUT} to learn
+    ...                nothing. The distinction that matters: a page still loading has a count
+    ...                that CHANGES, while a page as rendered as it will ever get has a count
+    ...                that sits still.
+    ...
+    ...                So stop as soon as the count hits zero, or holds the same value for
+    ...                ${ARTIFACT_STABLE_POLLS} consecutive polls. On a stubborn page that is
+    ...                ~3s instead of 12s; on a genuinely loading page the count keeps moving
+    ...                and the full budget is still available. Fidelity is unchanged — the
+    ...                ${SETTLE} pause still follows either way.
+    ${budget}=       Convert Time    ${ARTIFACT_TIMEOUT}    number
+    ${polls}=        Evaluate    max(${ARTIFACT_STABLE_POLLS} + 1, int(${budget}))
+    ${previous}=     Set Variable    ${-1}
+    ${stable}=       Set Variable    ${0}
+    ${count}=        Set Variable    ${0}
+    FOR    ${poll}    IN RANGE    ${polls}
+        ${count}=    Get Element Count    ${LOADING_ARTIFACTS} >> visible=true
+        IF    ${count} == 0
+            RETURN    ${0}
+        END
+        IF    ${count} == ${previous}
+            ${stable}=    Evaluate    ${stable} + 1
+        ELSE
+            ${stable}=    Set Variable    ${0}
+        END
+        IF    ${stable} >= ${ARTIFACT_STABLE_POLLS}
+            RETURN    ${count}
+        END
+        ${previous}=    Set Variable    ${count}
+        Sleep           ${ARTIFACT_POLL}
+    END
+    RETURN           ${count}
 
 # ---------------------------------------------------------------------------
 # Record helpers
@@ -365,12 +412,51 @@ Click New Action
     Wait For Lightning Ready
 
 Fill Form Field
-    [Documentation]    Fill an input by field API name (input[name=...]), falling back to the visible label.
+    [Documentation]    Fill a form field by API name, then by visible label, then as a picklist.
+    ...
+    ...                Every attempt is bounded by ${FIELD_TIMEOUT}. The previous version
+    ...                called `Fill Text` directly, which waits the full 45s browser timeout
+    ...                per attempt — on 2026-08-03 three fields that were not on the form
+    ...                consumed over two minutes and produced no images. A field that is not
+    ...                there should be reported in seconds, and the message should say what
+    ...                to change rather than quoting a Playwright locator.
     [Arguments]      ${field}    ${value}
-    ${by_name}=      Run Keyword And Return Status    Fill Text    input[name="${field}"] >> visible=true    ${value}
-    IF    not ${by_name}
-        Fill Text    lightning-input:has-text("${field}") input >> visible=true >> nth=0    ${value}
+    @{selectors}=    Create List
+    ...    input[name="${field}"] >> visible=true >> nth=0
+    ...    textarea[name="${field}"] >> visible=true >> nth=0
+    ...    lightning-input:has-text("${field}") input >> visible=true >> nth=0
+    ...    lightning-textarea:has-text("${field}") textarea >> visible=true >> nth=0
+    FOR    ${selector}    IN    @{selectors}
+        ${filled}=    Run Keyword And Return Status    Fill Field If Present    ${selector}    ${value}
+        IF    ${filled}    RETURN
     END
+    # Not a text input at all? Lightning renders a picklist as a combobox button plus a
+    # listbox, which `Fill Text` can never satisfy no matter how long it waits. Lead.Rating
+    # is one of these, and it was among the 2026-08-03 failures.
+    ${chosen}=       Run Keyword And Return Status    Choose Picklist Value    ${field}    ${value}
+    IF    ${chosen}    RETURN
+    ${msg}=          Catenate    SEPARATOR=${SPACE}
+    ...    Could not find a field for "${field}" on this form — tried name="${field}", the
+    ...    visible label, and a picklist. Either the form never opened, the field is not on
+    ...    this layout/profile, or the docs give a label where the API name is needed. Fix the
+    ...    `fill_field` action in the screenshot block that sets ${field}.
+    Fail             ${msg}
+
+Fill Field If Present
+    [Documentation]    Wait a SHORT time for one candidate selector, then fill it. The wait is
+    ...                what bounds the attempt; `Fill Text` on an already-visible element is
+    ...                immediate.
+    [Arguments]      ${selector}    ${value}
+    Wait For Elements State    ${selector}    visible    ${FIELD_TIMEOUT}
+    Fill Text        ${selector}    ${value}
+
+Choose Picklist Value
+    [Documentation]    Open a Lightning combobox by its label and pick an option by text.
+    [Arguments]      ${field}    ${value}
+    Click Doc Element    lightning-combobox:has-text("${field}") button >> visible=true >> nth=0
+    ...    ${FIELD_TIMEOUT}
+    Click Doc Element    lightning-base-combobox-item:has-text("${value}") >> visible=true >> nth=0
+    ...    ${FIELD_TIMEOUT}
 
 # ---------------------------------------------------------------------------
 # The declarative-action dispatcher.

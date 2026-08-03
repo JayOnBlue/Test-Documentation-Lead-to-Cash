@@ -90,6 +90,22 @@ sf project deploy start --source-dir ../../force-app --target-org <org>
 sf org assign permset --name Order_Management_Docs --target-org <org>
 ```
 
+## Capture is incremental — each run resumes where the last one stopped
+
+`docs/images/` is **committed even when the run fails**, and a screenshot whose file already
+exists is skipped. So a run that captures 30 of 41 leaves 30 on `main`, and the next run works
+only on the remaining 11 and finishes far faster. Nothing is ever recaptured for free.
+
+This is why the commit step carries `if: always()`. Robot exits non-zero if *any single* one of
+the 41 screenshots fails, and a step's default `if: success()` therefore skipped the commit — a
+run that captured 30 good images discarded all 30, and the next run started from zero, spending
+~18 minutes to rediscover the same 30. The images survived only inside the run artifact, which
+the next run cannot read.
+
+To deliberately redo everything, dispatch with **recapture: true** (`-o vars FORCE:True`
+locally). Without it, re-dispatching is cheap and safe — it is the normal way to chip away at
+whatever is still missing.
+
 ## Self-test: run this after ANY edit to `DocsProject.resource`
 
 ```bash
@@ -113,6 +129,9 @@ lost to bugs this catches in about fifteen seconds:
 | `locator.click: Timeout` — "element is outside of the viewport" | Click Reaches A Button Below The Fold |
 | a click swallowed by a covering element | Click Falls Back To A DOM Click… |
 | 45s burned clicking a "More" menu the app lacks | Missing Tab Fails Fast With A Useful Message |
+| ~6 min/run waiting on stencils that never clear | Readiness Stops Waiting Once The Count Stops Improving |
+| 90s per `fill_field` that names a missing field | Missing Form Field Fails Fast With An Actionable Message |
+| a picklist that `Fill Text` can never satisfy | Picklist Field Is Chosen From The Combobox |
 
 It is deliberately outside `robot/DocsProject/`, and `cumulusci.yml` names a single suite file,
 so `cci task run capture_docs` never picks it up.

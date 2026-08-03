@@ -161,6 +161,65 @@ Missing Tab Fails Fast With A Useful Message
     Should Contain     ${error}    no "More"
     Log To Console    missing tab reported as: ${error}
 
+Readiness Stops Waiting Once The Count Stops Improving
+    [Documentation]    Regression test for 2026-08-03: nearly every page keeps 5-7 permanent
+    ...                stencils, so waiting for zero meant every one of ~30 captures paid the
+    ...                full ${ARTIFACT_TIMEOUT} — about six minutes per run, for no benefit.
+    ...                A static count now ends the wait early.
+    Set Test Variable    ${ARTIFACT_TIMEOUT}    20s
+    Set Test Variable    ${SETTLE}    0s
+    New Context    viewport=${VIEWPORT}
+    New Page       ${BASE}/permanent-stencils
+    ${before}=    Get Time    epoch
+    ${remaining}=    Wait For Loading Artifacts To Settle
+    ${after}=     Get Time    epoch
+    ${elapsed}=   Evaluate    ${after} - ${before}
+    Should Be Equal As Integers    ${remaining}    5
+    Should Be True    ${elapsed} < 10    took ${elapsed}s — should give up early, not wait 20s
+    Log To Console    \nstatic count of 5 detected in ${elapsed}s (budget was 20s)
+
+Readiness Still Uses Its Full Budget While A Page Is Improving
+    [Documentation]    The early exit must not fire on a page that is genuinely still loading,
+    ...                which is the whole reason the gate exists.
+    Set Test Variable    ${ARTIFACT_TIMEOUT}    6s
+    Set Test Variable    ${SETTLE}    0s
+    New Context    viewport=${VIEWPORT}
+    New Page       ${BASE}/lightning/page/home
+    # Inject spinners, then remove one per second so the count keeps changing.
+    Evaluate JavaScript    ${None}
+    ...    () => { for (let i = 0; i < 4; i++) { const d = document.createElement('div'); d.className = 'slds-spinner'; d.textContent = 'x'; document.body.appendChild(d); } setInterval(() => { const s = document.querySelector('.slds-spinner'); if (s) s.remove(); }, 1000); }
+    ${remaining}=    Wait For Loading Artifacts To Settle
+    Should Be Equal As Integers    ${remaining}    0
+    Log To Console    a shrinking count was waited out to zero, not abandoned
+
+Missing Form Field Fails Fast With An Actionable Message
+    [Documentation]    Regression test for 2026-08-03: three fill_field actions each burned the
+    ...                full 45s browser timeout twice over and reported only a Playwright
+    ...                locator. Now bounded by ${FIELD_TIMEOUT} and named in plain terms.
+    Set Test Variable    ${FIELD_TIMEOUT}    1s
+    Set Test Variable    ${CLICK_TIMEOUT}    1s
+    New Context    viewport=${VIEWPORT}
+    New Page       ${BASE}/emptyform
+    ${before}=    Get Time    epoch
+    ${status}    ${error}=    Run Keyword And Ignore Error    Fill Form Field    LastName    Smith
+    ${after}=     Get Time    epoch
+    ${elapsed}=   Evaluate    ${after} - ${before}
+    Should Be Equal    ${status}    FAIL
+    Should Contain     ${error}    LastName
+    Should Contain     ${error}    fill_field
+    Should Be True    ${elapsed} < 20    took ${elapsed}s — a missing field must fail fast
+    Log To Console    missing field reported in ${elapsed}s
+
+Picklist Field Is Chosen From The Combobox
+    [Documentation]    Lead.Rating is a picklist, so no amount of `Fill Text` waiting can work.
+    Set Test Variable    ${FIELD_TIMEOUT}    2s
+    New Context    viewport=${VIEWPORT}
+    New Page       ${BASE}/picklistform
+    Fill Form Field    Rating    Hot
+    ${title}=    Get Title
+    Should Be Equal    ${title}    PICKED
+    Log To Console    picklist value selected via the combobox strategy
+
 Readiness Gate Ignores A Hidden Spinner
     [Documentation]    Salesforce leaves display:none spinners in the DOM. Gating on their
     ...                presence rather than visibility would stall every capture.
